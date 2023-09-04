@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34018.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DifficultyMod", "DifficultyMod.csproj", "{FE97365B-E238-4F69-9352-DDC2EF1280AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE97365B-E238-4F69-9352-DDC2EF1280AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE97365B-E238-4F69-9352-DDC2EF1280AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE97365B-E238-4F69-9352-DDC2EF1280AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE97365B-E238-4F69-9352-DDC2EF1280AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8D0DA2EC-C4C1-45DC-9629-B9BD2B8F3EED}
+	EndGlobalSection
+EndGlobal

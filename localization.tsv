@@ -1,1 +1,63 @@
 Term	Notes	English
+difficultymod_config_spawn_UpperLeft		Upper Left Only
+difficultymod_config_spawn_LowerLeft		Lower Left Only
+difficultymod_config_spawn_UpperRight		Upper Right Only
+difficultymod_config_spawn_LowerRight		Lower Right Only
+difficultymod_config_spawn_Center		Center of the Board
+difficultymod_config_spawn_Anywhere		Anywhere on the Board *
+difficultymod_config_spawn		Summoned items appear in the
+difficultymod_config_spawn_menu_text		Allowed Spawn Location
+difficultymod_config_spawn_menu_tooltip		Summoned items only apply to Portals, Pirate Ships, Traveling Cart, etc.
+difficultymod_allon		Allow All
+difficultymod_alloff		Disallow All
+difficultymod_defaults		Reset Defaults
+difficultymod_closemenu		Close Menu
+difficultymod_config_location_header		Click here to modify where enemies will spawn
+difficultymod_config_location_tooltip		A popup will open when this is clicked
+difficultymod_config_enabling_header		Click here to modify various game features
+difficultymod_config_enabling_menu_text		Game Features Options
+difficultymod_config_enabling_menu_tooltip		Click on a feature to modify it. An asterisk* indicates the current choice is the default
+difficultymod_config_enabling_tooltip		A popup will open when this is clicked
+difficultymod_config_enabling_rare_enable		Rare Portals are Enabled *
+difficultymod_config_enabling_rare_disable		Rare Portals are Disabled
+difficultymod_config_enabling_rare_noportals		<size=75%>Enable Strange Portals to Modify Rare Portals</size>
+difficultymod_config_enabling_rare_tooltip		Disabling the portals means you must find your own way to the Dark Forest
+difficultymod_config_enabling_strange_enable		Strange Portals are Enabled *
+difficultymod_config_enabling_strange_disable		Strange Portals are Disabled
+difficultymod_config_enabling_strange_tooltip		Disabling the portals means you must find your own way to the Dark Forest
+difficultymod_config_enabling_pirate_enable		Pirate Ships are Enabled *
+difficultymod_config_enabling_pirate_disable		Disable Pirate Ships
+difficultymod_config_enabling_location_enable		Enemy Can Spawn from Purple Locations *
+difficultymod_config_enabling_location_disable		Enemy Cannot Spawns from Purple Locations
+difficultymod_config_enabling_location_tooltip		Purple Locations include Graveyards, Mountains, Forests, etc.
+difficultymod_config_enabling_rangefree_enable		Animals can Roam the Board *
+difficultymod_config_enabling_rangefree_disable		Animals cannot Roam the Board
+difficultymod_config_enabling_curses_enable		Curses can always be selected on the New Game Screen
+difficultymod_config_enabling_curses_disable		Curses can only be selected on the New Game Screen if previouly defeated *
+difficultymod_config_enabling_curses_tooltip		When allowed, you can always start a new game with Curses#When defaulted, you have to defeat the curse in#each save game to enable curses when starting a new game
+difficultymod_config_storage		Shed/Warehouse Storage#   Capacity
+difficultymod_config_storage_Small		Small
+difficultymod_config_storage_Normal		Normal *
+difficultymod_config_storage_Large		Large
+difficultymod_config_storage_Enormous		Enormous
+difficultymod_config_storage_Small_tooltip		Sheds store 3 cards, Warehouses store 12 cards
+difficultymod_config_storage_Normal_tooltip		Sheds store 4 cards, Warehouses store 14 cards
+difficultymod_config_storage_Large_tooltip		Sheds store 5 cards, Warehouses store 18 cards
+difficultymod_config_storage_Enormous_tooltip		Sheds store 10 cards, Warehouses store 30 cards
+difficultymod_config_difficulty_menu_text		Difficulty Setting
+difficultymod_config_difficulty_menu_tooltip		Affects the overall strength of enemies and frequency of random events.
+difficultymod_config_difficulty		Choose the Game Difficulty
+difficultymod_config_difficulty_0		Very Easy
+difficultymod_config_difficulty_1		Easy
+difficultymod_config_difficulty_2		Normal (default)
+difficultymod_config_difficulty_3		Challenging
+difficultymod_config_difficulty_4		Hard
+difficultymod_config_difficulty_5		Very Hard
+difficultymod_config_difficulty_6		Nigh Impossible (Good Luck!)
+difficultymod_config_difficulty_0_tooltip		Enemies are weak,#Portals are less frequent,#Food is produced faster
+difficultymod_config_difficulty_1_tooltip		Enemies are a little weaker
+difficultymod_config_difficulty_2_tooltip		How the game runs without this mod
+difficultymod_config_difficulty_3_tooltip		Enemies are a little stronger
+difficultymod_config_difficulty_4_tooltip		Enemies are stronger,#Portals are more frequent
+difficultymod_config_difficulty_5_tooltip		Enemies are even stronger,#Portals are more frequent,#Food is produced slower
+difficultymod_config_difficulty_6_tooltip		Enemies are twice as strong as normal,#Portal are very frequent,#Food is produced slower

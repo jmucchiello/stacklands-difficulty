@@ -1,0 +1,277 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using UnityEngine;
+using HarmonyLib;
+using System.Reflection;
+using System.Collections;
+
+namespace DifficultyModNS
+{
+    public enum StorageCapacity
+    {
+        Small, Normal, Large, Enormous
+    };
+
+    public partial class DifficultyMod : Mod
+    {
+        public ConfigEnabling configEnabling;
+
+        public static int PortalFrequncy = 4;
+        public static int PirateFrequncy = 7;
+        public static int MommaFrequncy = 3;
+
+        public static StorageCapacity storageCapacity = StorageCapacity.Normal;
+        public static bool AllowRarePortals => instance.configEnabling.enabling.rarePortals;
+        public static bool AllowStrangePortals => instance.configEnabling.enabling.portals;
+        public static bool AllowPirateShips => instance.configEnabling.enabling.pirates;
+        public static bool AllowDangerousLocations => instance.configEnabling.enabling.locations;
+        public static bool AllowAnimalsToRoam => instance.configEnabling.enabling.roamingAnimals;
+        public static bool AllowCursesAtStart => instance.configEnabling.enabling.cursesAtStart;
+
+        public static StorageCapacity GetStorageCapacity => instance.configEnabling.storageCapacity;
+    }
+
+    public class Enabling
+    {
+        public bool rarePortals = true, portals = true, pirates = true, locations = true, roamingAnimals = true, cursesAtStart = false;
+    }
+
+    public class ConfigEnabling : ConfigEntryHelper
+    {
+        public override object BoxedValue { get => enabling; set => enabling = (Enabling)value; }
+        public Enabling enabling = new();
+        public StorageCapacity storageCapacity = StorageCapacity.Normal;
+        private string toolTip;
+
+        private static CustomButton headerText;
+
+        public ConfigEnabling(string name, ConfigFile config)
+        {
+            Name = name;
+            Config = config;
+            ValueType = typeof(ConfigEnabling);
+            enabling.rarePortals = Config.GetValue<bool>("difficultymod_enableRarePortals");
+            enabling.portals = Config.GetValue<bool>("difficultymod_enablePortals");
+            enabling.pirates = Config.GetValue<bool>("difficultymod_enablePirates");
+            enabling.locations = Config.GetValue<bool>("difficultymod_enableLocationEnemies");
+            enabling.roamingAnimals = Config.GetValue<bool>("difficultymod_enableRangeFreeAnimals");
+            enabling.cursesAtStart = Config.GetValue<bool>("difficultymod_enableCursesAtStart");
+            storageCapacity = (StorageCapacity)Config.GetValue<int>("difficultymod_storage_capacity");
+            toolTip = SokLoc.Translate("difficultymod_config_enabling_tooltip");
+
+            UI = new ConfigUI()
+            {
+                Hidden = true,
+                OnUI = delegate (ConfigEntryBase c)
+                {
+                    headerText = UnityEngine.Object.Instantiate(PrefabManager.instance.ButtonPrefab, ModOptionsScreen.instance.ButtonsParent);
+                    headerText.transform.localScale = Vector3.one;
+                    headerText.transform.localPosition = Vector3.zero;
+                    headerText.transform.localRotation = Quaternion.identity;
+                    headerText.TextMeshPro.text = SokLoc.Translate("difficultymod_config_enabling_header");
+                    headerText.TooltipText = toolTip;
+                    headerText.Clicked += delegate ()
+                    {
+                        DifficultyMod.Log("Calling OpenMenu");
+                        OpenMenu();
+                    };
+                    _ = UnityEngine.Object.Instantiate(ModOptionsScreen.instance.SpacerPrefab, ModOptionsScreen.instance.ButtonsParent);
+                }
+            };
+            Config.Entries.Add(this);
+        }
+
+        CustomButton btnRare, btnPortals, btnPirates, btnLocations, btnAnimals, btnCurses, btnStorage;
+
+        public void OpenMenu()
+        {
+            if (GameCanvas.instance.ModalIsOpen) return;
+            ModalScreen.instance.Clear();
+            popup = ModalScreen.instance;
+            popup.SetTexts(SokLoc.Translate("difficultymod_config_enabling_menu_text"),
+                                 SokLoc.Translate("difficultymod_config_enabling_menu_tooltip"));
+
+            btnPortals = NewButton(enabling.portals, "strange");
+            btnPortals.Clicked += delegate
+            {
+                enabling.portals = !enabling.portals;
+                btnRare.enabled = enabling.portals;
+                btnRare.TextMeshPro.faceColor = Color.white;
+                btnRare.Update();
+                btnPortals.TextMeshPro.text = ButtonAllowText(enabling.portals, "strange");
+                Config.Data["difficultymod_enablePortals"] = enabling.portals;
+            };
+
+            btnRare = NewButton(enabling.rarePortals, "rare");
+            btnRare.Clicked += delegate
+            {
+                enabling.rarePortals = !enabling.rarePortals;
+                btnRare.TextMeshPro.text = ButtonAllowText(enabling.portals ? enabling.rarePortals : false, "rare");
+                Config.Data["difficultymod_enableRarePortals"] = enabling.rarePortals;
+            };
+            btnRare.enabled = enabling.portals;
+            btnRare.Update();
+
+            btnPirates = NewButton(enabling.pirates, "pirate");
+            btnPirates.Clicked += delegate
+            {
+                enabling.pirates = !enabling.pirates;
+                btnPirates.TextMeshPro.text = ButtonAllowText(enabling.pirates, "pirate");
+                Config.Data["difficultymod_enablePirates"] = enabling.pirates;
+            };
+
+            btnLocations = NewButton(enabling.locations, "location");
+            btnLocations.Clicked += delegate
+            {
+                enabling.locations = !enabling.locations;
+                btnLocations.TextMeshPro.text = ButtonAllowText(enabling.locations, "location");
+                Config.Data["difficultymod_enableLocationEnemies"] = enabling.locations;
+            };
+
+            btnAnimals = NewButton(enabling.locations, "rangefree");
+            btnAnimals.Clicked += delegate
+            {
+                enabling.roamingAnimals = !enabling.roamingAnimals;
+                btnAnimals.TextMeshPro.text = ButtonAllowText(enabling.roamingAnimals, "rangefree");
+                Config.Data["difficultymod_enableRangeFreeAnimals"] = enabling.roamingAnimals;
+            };
+
+            if (WorldManager.instance.IsSpiritDlcActive())
+            {
+                btnCurses = NewButton(enabling.cursesAtStart, "curses");
+                btnCurses.Clicked += delegate
+                {
+                    enabling.cursesAtStart = !enabling.cursesAtStart;
+                    btnCurses.TextMeshPro.text = ButtonAllowText(enabling.cursesAtStart, "curses");
+                    Config.Data["difficultymod_enableCursesAtStart"] = enabling.cursesAtStart;
+                };
+            }
+
+            btnStorage = NewButton(false, "storage");
+            btnStorage.Clicked += delegate
+            {
+                if (storageCapacity == StorageCapacity.Enormous) storageCapacity = StorageCapacity.Small;
+                else ++storageCapacity;
+                btnStorage.TextMeshPro.text = ButtonAllowText(false, "storage");
+                Config.Data["difficultymod_storage_capacity"] = (int)storageCapacity;
+            };
+
+            popup.AddOption(RightAlign(SokLoc.Translate("difficultymod_defaults")), SetDefaults);
+            popup.AddOption(RightAlign(SokLoc.Translate("difficultymod_closemenu")), CloseMenu);
+            GameCanvas.instance.OpenModal();
+        }
+
+        private string ButtonAllowText(bool enabled, string place)
+        {
+            if (place == "storage")
+            {
+                return SokLoc.Translate($"difficultymod_config_storage") +
+                       ": " + SokLoc.Translate($"difficultymod_config_storage_{storageCapacity}");
+            }
+            else if (place == "rare" && enabling.portals)
+            {
+                return SokLoc.Translate($"difficultymod_config_enabling_{place}_{(enabled ? "enable" : "disable")}");
+            }
+            else if (place == "rare" && !enabling.portals)
+            {
+                return "<color=#bfbfbf><s>" + SokLoc.Translate($"difficultymod_config_enabling_{place}_noportals") + "</s></color>";
+            }
+            else
+            {
+                if (place == "strange" && btnRare != null) btnRare.TextMeshPro.text = ButtonAllowText(enabling.rarePortals, "rare");
+                return SokLoc.Translate($"difficultymod_config_enabling_{place}_{(enabled ? "enable" : "disable")}");
+            }
+        }
+
+        private CustomButton NewButton(bool state, string place)
+        {
+            CustomButton btn = UnityEngine.Object.Instantiate(PrefabManager.instance.ButtonPrefab, ModOptionsScreen.instance.ButtonsParent);
+            btn.transform.SetParent(popup.ButtonParent);
+            btn.transform.localScale = Vector3.one;
+            btn.transform.localPosition = Vector3.zero;
+            btn.transform.position = new Vector3 { x = 50, y = 0, z = 0 };
+            btn.transform.localRotation = Quaternion.identity;
+            btn.TextMeshPro.text = ButtonAllowText(state, place);
+            if (place != "storage")
+            {
+                SokTerm term = SokLoc.instance.CurrentLocSet.GetTerm($"difficultymod_config_enabling_{place}_tooltip");
+                if (term != null)
+                {
+                    btn.TooltipText = SokLoc.Translate($"difficultymod_config_enabling_{place}_tooltip");
+                }
+            }
+            else
+            {
+                SokTerm term = SokLoc.instance.CurrentLocSet.GetTerm($"difficultymod_config_storage_tooltip");
+                if (term != null)
+                {
+                    btn.TooltipText = SokLoc.Translate($"difficultymod_config_storage_{place}_tooltip");
+                }
+            }
+            return btn;
+        }
+
+        public override void SetDefaults()
+        {
+            enabling = new();
+            storageCapacity = StorageCapacity.Normal;
+            if (popup  != null)
+            {
+                btnAnimals.TextMeshPro.text = ButtonAllowText(enabling.roamingAnimals, "rangefree");
+                btnLocations.TextMeshPro.text = ButtonAllowText(enabling.locations, "location");
+                btnPirates.TextMeshPro.text = ButtonAllowText(enabling.pirates, "pirate");
+                btnPortals.TextMeshPro.text = ButtonAllowText(enabling.portals, "strange");
+                btnRare.TextMeshPro.text = ButtonAllowText(enabling.rarePortals, "rare");
+                btnRare.enabled = enabling.portals;
+                if (WorldManager.instance.IsSpiritDlcActive())
+                {
+                    btnCurses.TextMeshPro.text = ButtonAllowText(enabling.cursesAtStart, "curses");
+                }
+                btnStorage.TextMeshPro.text = ButtonAllowText(false, "storage");
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Animal),nameof(Animal.CanMove),MethodType.Getter)]
+    public class RangeFreeAnimals
+    {
+        static bool Prefix(Animal __instance, ref bool __result)
+        {
+            if (DifficultyMod.AllowAnimalsToRoam)
+            {
+                __result = false;
+                return false;
+            }
+            return true; // normal processing
+        }
+    }
+
+    [HarmonyPatch(typeof(RunOptionsScreen), "SetCurseButton")]
+    public class CursesAtStart
+    {
+        static void Prefix(RunOptionsScreen __instance, CustomButton but, ref bool curseUnlocked, bool curseEnabled, string mainTerm)
+        {
+            if (DifficultyMod.AllowCursesAtStart)
+            {
+                curseUnlocked = true;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(WorldManager), nameof(WorldManager.CardCapIncrease))]
+    public class CardCapIncrease
+    {
+        public static int ShedIncrease = 4;
+        public static int WarehouseIncrase = 14;
+
+        static bool Prefix(WorldManager __instance, ref int __result, GameBoard board)
+        {
+            __result = __instance.GetCardCount("shed", board) * ShedIncrease
+                        + __instance.GetCardCount("warehouse", board) * WarehouseIncrase
+                        + __instance.GetCardCount("lighthouse", board) * WarehouseIncrase;
+            return false;
+        }
+    }
+
+}
