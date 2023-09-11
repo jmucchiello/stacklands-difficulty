@@ -1,6 +1,7 @@
 **Scope**
 Ability to make the game easier/harder
 Prevent mobs from spawning anywhere, to prevent layout disruptions
+Difficulty Levels: Very Easy, Easy, Normal, Challenging, Hard, Very Hard, Brutal
 
 **Checklist**
 Make the portals spawn in middle of board -- Over engineered to set where they spawn and affects all spawned enemies -- Done (Might change configuration interface)
@@ -9,7 +10,7 @@ Turning off all portals/pirates -- Done
 Increase/Decrease frequency of portals/pirates -- Coded
 Increase/Decrease frequency of Traveling Card/Momma Crab -- On list
 Kraken -- will follow above spawning rules -- No action (Not sure how the tentacles will work)
-Remove hostiles from purple locations -- On list
+Remove hostiles from purple locations -- Coded
 Increase frequency of hostiles in purple locations -- On list
 Increase/Decrease strength of enemies -- Done (Range from 60% to 200% change in encounter strength)
 Increase/Decrease frequency of Only One Villager checks -- Coded
@@ -26,7 +27,3 @@ DLC: Greed demands of more than 2 items are increasedby 1 or durations greater t
 DLC: Old Villagers can't Breed -- Coded
 DLC: Villagers live shorter/longer lives -- Coded
 DLC: Time to create Happiness from all sources increased/decreased -- Coded
-
-**Q&A**
-Question: Should these Increase/Decrease items be individual config entries or should there just be a global "very easy/easy/normal/above normal/hard/very hard" dial that causes tweaks in each of these places? 
-Answer: Yes. Using difficulty levels for most of this.

@@ -11,6 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="EndOfMonthCutsceens.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Collections" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>$(stacklands)/Stacklands_Data/Managed/0Harmony.dll</HintPath>
       <Private>False</Private>

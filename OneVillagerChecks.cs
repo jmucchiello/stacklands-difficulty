@@ -13,7 +13,7 @@ namespace DifficultyModNS
         {
             switch (difficulty)
             {
-                case >= DifficultyType.Impossible:
+                case >= DifficultyType.Brutal:
                     OneVillagerChecks.frequency = 8;
                     OneVillagerChecks.startChecking = 16;
                     break;

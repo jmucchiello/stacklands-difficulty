@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 using HarmonyLib;
 using System.Reflection;
-using System.Collections;
+using System.Reflection.Emit;
 
 namespace DifficultyModNS
 {
@@ -17,11 +14,9 @@ namespace DifficultyModNS
     {
         public ConfigEnabling configEnabling;
 
-        public static int PortalFrequncy = 4;
-        public static int PirateFrequncy = 7;
-        public static int MommaFrequncy = 3;
-
-        public static StorageCapacity storageCapacity = StorageCapacity.Normal;
+        public static StorageCapacity storageCapacity => instance.configEnabling.storageCapacity;
+        public static bool AllowSadEvents => true;
+        public static bool AllowMommaCrab => true;
         public static bool AllowRarePortals => instance.configEnabling.enabling.rarePortals;
         public static bool AllowStrangePortals => instance.configEnabling.enabling.portals;
         public static bool AllowPirateShips => instance.configEnabling.enabling.pirates;
@@ -37,7 +32,7 @@ namespace DifficultyModNS
         public bool rarePortals = true, portals = true, pirates = true, locations = true, roamingAnimals = true, cursesAtStart = false;
     }
 
-    public class ConfigEnabling : ConfigEntryHelper
+    public class ConfigEnabling : ConfigEntryModalHelper
     {
         public override object BoxedValue { get => enabling; set => enabling = (Enabling)value; }
         public Enabling enabling = new();
@@ -216,7 +211,7 @@ namespace DifficultyModNS
         {
             enabling = new();
             storageCapacity = StorageCapacity.Normal;
-            if (popup  != null)
+            if (popup != null)
             {
                 btnAnimals.TextMeshPro.text = ButtonAllowText(enabling.roamingAnimals, "rangefree");
                 btnLocations.TextMeshPro.text = ButtonAllowText(enabling.locations, "location");
@@ -230,20 +225,59 @@ namespace DifficultyModNS
                 }
                 btnStorage.TextMeshPro.text = ButtonAllowText(false, "storage");
             }
+            Config.Data["difficultymod_enableRarePortals"] = enabling.rarePortals;
+            Config.Data["difficultymod_enablePortals"] = enabling.portals;
+            Config.Data["difficultymod_enablePirates"] = enabling.pirates;
+            Config.Data["difficultymod_enableLocationEnemies"] = enabling.locations;
+            Config.Data["difficultymod_enableRangeFreeAnimals"] = enabling.roamingAnimals;
+            Config.Data["difficultymod_enableCursesAtStart"] = enabling.cursesAtStart;
+            Config.Data["difficultymod_storage_capacity"] = (int)storageCapacity;
         }
     }
 
-    [HarmonyPatch(typeof(Animal),nameof(Animal.CanMove),MethodType.Getter)]
+    [HarmonyPatch(typeof(Animal))]
     public class RangeFreeAnimals
     {
-        static bool Prefix(Animal __instance, ref bool __result)
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(Animal.CanMove), MethodType.Getter)]
+        static void Postfix(Animal __instance, ref bool __result)
         {
-            if (DifficultyMod.AllowAnimalsToRoam)
+            if (!DifficultyMod.AllowAnimalsToRoam)
             {
                 __result = false;
-                return false;
             }
-            return true; // normal processing
+        }
+
+        [HarmonyTranspiler]
+        [HarmonyPatch(nameof(Animal.UpdateCard))]
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            /***
+             *      Changed Animal.UpdateCard:
+             *      		if (CreateTimer >= CreateTime && (moveFlag || InAnimalPen))
+             *      to
+             *              if (CreateTimer >= CreateTime && (CanMove || InAnimalPen))
+             *
+             ***/
+            try
+            {
+                Type myClass = typeof(SpecialEvents_Patch);
+                List<CodeInstruction> result = new CodeMatcher(instructions)
+                    .MatchStartForward(
+                        new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(Mob),"moveFlag"))
+                    )
+                    .Set(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(Animal), "CanMove"))
+                    .InstructionEnumeration()
+                    .ToList();
+                result.ForEach(instruction => DifficultyMod.Log($"{instruction}"));
+                DifficultyMod.Log($"Exiting Instructions in {instructions.Count()}, instructions out {result.Count()}");
+                return result;
+            }
+            catch (Exception e)
+            {
+                DifficultyMod.LogError("Failed to Transpile EndOfMonthCutscenes.SpecialEvents" + e.ToString());
+                return instructions;
+            }
         }
     }
 
@@ -263,13 +297,13 @@ namespace DifficultyModNS
     public class CardCapIncrease
     {
         public static int ShedIncrease = 4;
-        public static int WarehouseIncrase = 14;
+        public static int WarehouseIncrease = 14;
 
         static bool Prefix(WorldManager __instance, ref int __result, GameBoard board)
         {
             __result = __instance.GetCardCount("shed", board) * ShedIncrease
-                        + __instance.GetCardCount("warehouse", board) * WarehouseIncrase
-                        + __instance.GetCardCount("lighthouse", board) * WarehouseIncrase;
+                     + __instance.GetCardCount("warehouse", board) * WarehouseIncrease
+                     + __instance.GetCardCount("lighthouse", board) * WarehouseIncrease;
             return false;
         }
     }

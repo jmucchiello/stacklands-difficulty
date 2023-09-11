@@ -8,17 +8,16 @@ namespace DifficultyModNS
 {
     public partial class DifficultyMod : Mod
     {
-        public float happinessBlueprintModifier = 1f;
-
         public void SetupDLC()
         {
             SetupHappinessCards();
             SetupDeathLifestages();
+            SetupSadEventFrequency();
         }
 
         public void SetupHappinessCards()
         {
-            happinessBlueprintModifier = Difficulty switch
+            float happinessBlueprintModifier = Difficulty switch
             {
                 <= DifficultyType.VeryEasy => 0.8f,
                 >= DifficultyType.VeryHard => 1.2f,
@@ -26,18 +25,19 @@ namespace DifficultyModNS
             };
             if (happinessBlueprintModifier != 1f)
             {
-                new List<BlueprintModifier>() {
-                    new BlueprintModifier() { blueprintId = "blueprint_admire_coin", subprintindex = 0, multiplier = happinessBlueprintModifier },
-                    new BlueprintModifier() { blueprintId = "blueprint_euphoria", subprintindex = 0, multiplier = happinessBlueprintModifier },
-                    new BlueprintModifier() { blueprintId = "blueprint_happiness", subprintindex = 0, multiplier = happinessBlueprintModifier },
-                    new BlueprintModifier() { blueprintId = "blueprint_tavern", subprintindex = 0, multiplier = happinessBlueprintModifier }
+                new List<BlueprintTimerModifier>() {
+                    new BlueprintTimerModifier() { blueprintId = "blueprint_admire_coin", subprintindex = 0, multiplier = happinessBlueprintModifier },
+                    new BlueprintTimerModifier() { blueprintId = "blueprint_euphoria", subprintindex = 0, multiplier = happinessBlueprintModifier },
+                    new BlueprintTimerModifier() { blueprintId = "blueprint_happiness", subprintindex = 0, multiplier = happinessBlueprintModifier },
+                    new BlueprintTimerModifier() { blueprintId = "blueprint_tavern", subprintindex = 0, multiplier = happinessBlueprintModifier }
                 }.ForEach(x => x.AddToList());
             }
+            Log($"Happiness creation multiplier {happinessBlueprintModifier}");
         }
 
         public void SetupDeathLifestages()
         {
-            if (difficulty == DifficultyType.Impossible)
+            if (difficulty == DifficultyType.Brutal)
             {
                 AgingDetermination.Teenager = 1;
                 AgingDetermination.Adult = 5;
@@ -49,6 +49,28 @@ namespace DifficultyModNS
                 AgingDetermination.Adult = 9;
                 AgingDetermination.Elderly = 12;
             }
+            Log($"Lifespans - Teens: {AgingDetermination.Teenager}, Adults: {AgingDetermination.Adult}, Elderly: {AgingDetermination.Elderly}");
+        }
+
+        public void SetupSadEventFrequency()
+        {
+            switch (difficulty)
+            {
+                case DifficultyType.VeryEasy:
+                    SpecialEvents_Patch.SadEventDivisor = 5;
+                    SpecialEvents_Patch.SadEventMinMonth = 5;
+                    break;
+                case >= DifficultyType.VeryHard:
+                    SpecialEvents_Patch.SadEventDivisor = 3;
+                    SpecialEvents_Patch.SadEventMinMonth = 3;
+                    break;
+                default:
+                    SpecialEvents_Patch.SadEventDivisor = 4;
+                    SpecialEvents_Patch.SadEventMinMonth = 4;
+                    break;
+            }
+            if (!AllowSadEvents) SpecialEvents_Patch.SadEventMinMonth = 1000000;
+            DifficultyMod.Log($"Sad Event Frequency {SpecialEvents_Patch.SadEventDivisor} Min Month {SpecialEvents_Patch.SadEventMinMonth}");
         }
     }
 
