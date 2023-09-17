@@ -20,12 +20,15 @@ namespace DifficultyModNS
         private void Awake()
         {
             instance = this;
+            WMCreateCard_Patch.WM_IsLoadingSaveRound = new Traverse(WorldManager.instance).Field<bool>("IsLoadingSaveRound");
             Harmony.PatchAll();
         }
         public override void Ready()
         {
             SetupConfig();
+            SetupShowDifficulty();
             ApplySettings();
+            Log($"Count: {GameScreen.instance.transform.childCount}");
             Logger.Log("Ready!");
         }
 
@@ -34,6 +37,11 @@ namespace DifficultyModNS
             configDifficulty = new ConfigDifficulty("difficultymod_difficulty", Config, DifficultyType.Normal);
             configEnabling = new ConfigEnabling("difficultymod_enabling", Config);
             configSpawnSites = new ConfigSpawnSites("difficultymod_spawning", Config, SpawnSites.Anywhere);
+            configShowDifficulty = new ConfigEntry<bool>("difficultymod_showdifficulty", Config, true, new ConfigUI()
+            {
+                NameTerm = "difficultymod_showdifficulty",
+                TooltipTerm = "difficultymod_showdifficulty_tooltip"
+            });
             ConfigFreeText configDefaults = new("none", Config, ConfigEntryModalHelper.RightAlign(SokLoc.Translate("difficultymod_defaults")));
             configDefaults.Clicked += delegate (ConfigEntryBase c)
             {
@@ -58,6 +66,7 @@ namespace DifficultyModNS
             SetupNewVillagerChecks();
             SetupStorageCapacity();
             SetupDLC();
+            ApplyShowDifficulty();
         }
 
         public static bool AnyCardInCardBagIsOfType(CardBag cardBag, Type type)

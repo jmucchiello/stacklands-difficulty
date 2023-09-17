@@ -81,39 +81,31 @@ namespace DifficultyModNS
     public class GameCardStartTimer_Patch
     {
         public static HashSet<GameCardTimerModifier> modifiers = new();
-        public static HashSet<string> tagged = new();
+//        public static HashSet<string> tagged = new();
 
         [HarmonyPrefix]
         [HarmonyPatch(nameof(GameCard.StartTimer))]
         static bool StartTimerPrefix(GameCard __instance, ref float time, TimerAction a, string status, string actionId, bool withStatusBar = true)
         {
-            if (tagged.Contains(__instance.CardData.UniqueId)) return false;
-            tagged.Add(__instance.CardData.UniqueId);
-
-            DifficultyMod.Log($"StartTimer {modifiers.Count} {actionId} {time} {status} tagged.count {tagged.Count}");
-            foreach (GameCardTimerModifier x in modifiers)
-            {
-//                DifficultyMod.Log($"{x.actionId} {x.myCardDataType} {__instance.CardData.GetType()} {x.myCardDataType.IsAssignableFrom(__instance.CardData.GetType())} {__instance.CardData.GetType().IsAssignableFrom(x.myCardDataType)}");
-            }
             GameCardTimerModifier m = modifiers.FirstOrDefault(x => x.actionId == actionId && x.myCardDataType.IsAssignableFrom(__instance.CardData.GetType()));
             if (m != null)
             {
                 if (String.IsNullOrEmpty(m.hasCardBag) || m.CheckCardBag(__instance))
                 {
-                    DifficultyMod.Log($"ActionId {actionId} time on entry {time} {m.multiplier} {m.newTime} {__instance.CardData.Id}");
+//                    DifficultyMod.Log($"ActionId {actionId} time on entry {time} {m.multiplier} {m.newTime} {__instance.CardData.Id}");
                     if (m.multiplier > 0f) { time = time * m.multiplier; }
                     else if (m.newTime > 0f) { time = m.newTime; }
-                    DifficultyMod.Log($"ActionId {actionId} time on exit {time}");
+//                    DifficultyMod.Log($"ActionId {actionId} time on exit {time}");
                 }
             }
             return true;
         }
 
-        [HarmonyPrefix]
-        [HarmonyPatch(nameof(GameCard.CancelTimer))]
+//        [HarmonyPrefix]
+//        [HarmonyPatch(nameof(GameCard.CancelTimer))]
         static void CancelTimerPrefix(GameCard __instance)
         {
-            tagged.Remove(__instance.CardData.UniqueId);
+//            tagged.Remove(__instance.CardData.UniqueId);
         }
     }
 

@@ -21,10 +21,10 @@ namespace DifficultyModNS
             {
                 case SpawnSites.Anywhere: lowX = lowZ = 0f; highX = highZ = 1f; break;
                 case SpawnSites.Center: lowX = lowZ = 0.4f; highX = highZ = 0.6f; break;
-                case SpawnSites.UpperLeft: lowX = lowZ = 0f; highX = highZ = 0.2f; break;
-                case SpawnSites.UpperRight: lowX = 0.8f; lowZ = 0f; highX = 1f;  highZ = 0.2f; break;
-                case SpawnSites.LowerLeft: lowX = 0f; lowZ = 0.8f; highX = 0.2f;  highZ = 1f; break;
-                case SpawnSites.LowerRight: lowX = lowZ = 0.8f; highX = highZ = 1f; break;
+                case SpawnSites.LowerLeft: lowX = lowZ = 0f; highX = highZ = 0.2f; break;
+                case SpawnSites.LowerRight: lowX = 0.8f; lowZ = 0f; highX = 1f;  highZ = 0.2f; break;
+                case SpawnSites.UpperLeft: lowX = 0f; lowZ = 0.8f; highX = 0.2f;  highZ = 1f; break;
+                case SpawnSites.UpperRight: lowX = lowZ = 0.8f; highX = highZ = 1f; break;
             }
             Log($"Spawn Location Ranges: X({lowX:F1} to {highX:F1}), Y({lowZ:F1} to {highZ:F1})");
         }
@@ -52,6 +52,8 @@ namespace DifficultyModNS
             };
             onDisplayEnumTooltip = delegate (SpawnSites s)
             {
+                SokTerm term = SokLoc.instance.CurrentLocSet.GetTerm($"difficultymod_config_spawn_tooltip_{s}");
+                if (term == null) return null;
                 return SokLoc.Translate($"difficultymod_config_spawn_tooltip_{s}");
             };
             popupMenuTitleText = SokLoc.Translate("difficultymod_config_spawn_menu_text");

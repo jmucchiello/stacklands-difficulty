@@ -46,13 +46,13 @@ namespace DifficultyModNS
             {
                 if (instruction.opcode == OpCodes.Ldc_I4_5)
                 {
-                    DifficultyMod.Log("Transpiling const 5 to variable");
+//                    DifficultyMod.Log("Transpiling const 5 to variable");
                     FieldInfo fi = typeof(OneVillagerChecks).GetField("frequency");
                     yield return new CodeInstruction(OpCodes.Ldsfld, fi);
                 }
                 else if (instruction.opcode == OpCodes.Ldc_I4_S && Convert.ToInt32(instruction.operand) == 10)
                 {
-                    DifficultyMod.Log("Transpiling const 10 to variable");
+//                    DifficultyMod.Log("Transpiling const 10 to variable");
                     FieldInfo fi = typeof(OneVillagerChecks).GetField("startChecking");
                     yield return new CodeInstruction(OpCodes.Ldsfld, fi);
                 }

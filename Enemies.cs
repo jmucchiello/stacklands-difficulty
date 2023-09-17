@@ -59,16 +59,17 @@ namespace DifficultyModNS
 
     [HarmonyPatch(typeof(WorldManager),nameof(WorldManager.CreateCard))]
     [HarmonyPatch(new Type[] { typeof(Vector3), typeof(CardData), typeof(bool), typeof(bool), typeof(bool), typeof(bool) })]
-    internal class WMCreateCard_Patch
+    public class WMCreateCard_Patch
     {
-        static void Postfix(WorldManager __instance, CardData __result, ref Vector3 location)
+        public static Traverse<bool> WM_IsLoadingSaveRound;
+        static void Postfix(WorldManager __instance, CardData __result, ref Vector3 position)
         {
-            bool loading = new Traverse(__instance).Field<bool>("IsLoadingSaveRound").Value;
-            if (!loading && __result is Combatable c)
+            bool loading = WM_IsLoadingSaveRound.Value;
+            if (!loading && __result is Combatable c && __result is not BaseVillager)
             {
                 c.BaseCombatStats.MaxHealth = (int)(c.BaseCombatStats.MaxHealth * EmemySpawning_Patch.SpawnMultiplier);
                 c.HealthPoints = c.ProcessedCombatStats.MaxHealth;
-                location = __instance.GetRandomSpawnPosition();
+                position = __instance.GetRandomSpawnPosition();
             }
         }
     }

@@ -1,8 +1,8 @@
 Term	Notes	English
-difficultymod_config_spawn_UpperLeft		Upper Left Only
-difficultymod_config_spawn_LowerLeft		Lower Left Only
-difficultymod_config_spawn_UpperRight		Upper Right Only
-difficultymod_config_spawn_LowerRight		Lower Right Only
+difficultymod_config_spawn_UpperLeft		Upper Left Corner Only
+difficultymod_config_spawn_LowerLeft		Lower Left Corner Only
+difficultymod_config_spawn_UpperRight		Upper Right Corner Only
+difficultymod_config_spawn_LowerRight		Lower Right Corner Only
 difficultymod_config_spawn_Center		Center of the Board
 difficultymod_config_spawn_Anywhere		Anywhere on the Board *
 difficultymod_config_spawn		Summoned items appear in the
@@ -16,7 +16,7 @@ difficultymod_config_location_header		Click here to modify where enemies will sp
 difficultymod_config_location_tooltip		A popup will open when this is clicked
 difficultymod_config_enabling_header		Click here to modify various game features
 difficultymod_config_enabling_menu_text		Game Features Options
-difficultymod_config_enabling_menu_tooltip		Click on a feature to modify it. An asterisk* indicates the current choice is the default
+difficultymod_config_enabling_menu_tooltip		Click on a feature to modify it. An asterisk* indicates the current choice is the default choice.
 difficultymod_config_enabling_tooltip		A popup will open when this is clicked
 difficultymod_config_enabling_rare_enable		Rare Portals are Enabled *
 difficultymod_config_enabling_rare_disable		Rare Portals are Disabled
@@ -27,14 +27,16 @@ difficultymod_config_enabling_strange_disable		Strange Portals are Disabled
 difficultymod_config_enabling_strange_tooltip		Disabling the portals means you must find your own way to the Dark Forest
 difficultymod_config_enabling_pirate_enable		Pirate Ships are Enabled *
 difficultymod_config_enabling_pirate_disable		Disable Pirate Ships
+difficultymod_config_enabling_pirate_tooltip		When disabled, you won't be attacked by#pirates and you will never befriend a pirate.
 difficultymod_config_enabling_location_enable		Enemy Can Spawn from Purple Locations *
 difficultymod_config_enabling_location_disable		Enemy Cannot Spawns from Purple Locations
 difficultymod_config_enabling_location_tooltip		Purple Locations include Graveyards, Mountains, Forests, etc.
 difficultymod_config_enabling_rangefree_enable		Animals can Roam the Board *
 difficultymod_config_enabling_rangefree_disable		Animals cannot Roam the Board
+difficultymod_config_enabling_rangefree_tooltip		When disabled, animals will not move around.#It still requires an Animal Pen to stack animals.
 difficultymod_config_enabling_curses_enable		Curses can always be selected on the New Game Screen
 difficultymod_config_enabling_curses_disable		Curses can only be selected on the New Game Screen if previouly defeated *
-difficultymod_config_enabling_curses_tooltip		When allowed, you can always start a new game with Curses#When defaulted, you have to defeat the curse in#each save game to enable curses when starting a new game
+difficultymod_config_enabling_curses_tooltip		When allowed, you can always start a new game with Curses.#When defaulted, you have to defeat the curse in#each save game to enable curses when starting a new game
 difficultymod_config_storage		Shed/Warehouse Storage#   Capacity
 difficultymod_config_storage_Small		Small
 difficultymod_config_storage_Normal		Normal *
@@ -61,3 +63,6 @@ difficultymod_config_difficulty_3_tooltip		Enemies are a little stronger
 difficultymod_config_difficulty_4_tooltip		Enemies are stronger,#Portals are more frequent
 difficultymod_config_difficulty_5_tooltip		Enemies are even stronger,#Portals are more frequent,#Food is produced slower
 difficultymod_config_difficulty_6_tooltip		Enemies are twice as strong as normal,#Portal are very frequent,#Food is produced slower
+difficultymod_difficulty		Difficulty:
+difficultymod_showdifficulty		Show Difficulty setting in game
+difficultymod_showdifficulty_tooltip		When enabled, the difficulty setting will#appear at the top of the game screen.

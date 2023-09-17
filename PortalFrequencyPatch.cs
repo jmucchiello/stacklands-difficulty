@@ -65,7 +65,7 @@ namespace DifficultyModNS
                     .Set(OpCodes.Ldsfld, AccessTools.Field(myClass, "SadEventDivisor"))
                     .InstructionEnumeration()
                     .ToList();
-                result.ForEach(instruction => DifficultyMod.Log($"{instruction}"));
+//                result.ForEach(instruction => DifficultyMod.Log($"{instruction}"));
                 DifficultyMod.Log($"Exiting Instructions in {instructions.Count()}, instructions out {result.Count()}");
                 return result;
             }

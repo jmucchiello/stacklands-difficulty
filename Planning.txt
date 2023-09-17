@@ -4,24 +4,24 @@ Prevent mobs from spawning anywhere, to prevent layout disruptions
 Difficulty Levels: Very Easy, Easy, Normal, Challenging, Hard, Very Hard, Brutal
 
 **Checklist**
-Make the portals spawn in middle of board -- Over engineered to set where they spawn and affects all spawned enemies -- Done (Might change configuration interface)
+Make the portals spawn in middle of board -- Over engineered to set where they spawn and affects all spawned enemies -- Done
 Turning off rare strange portals -- Done
 Turning off all portals/pirates -- Done
 Increase/Decrease frequency of portals/pirates -- Coded
-Increase/Decrease frequency of Traveling Card/Momma Crab -- On list
+Increase/Decrease frequency of Traveling Card/Momma Crab -- Coded
 Kraken -- will follow above spawning rules -- No action (Not sure how the tentacles will work)
 Remove hostiles from purple locations -- Coded
 Increase frequency of hostiles in purple locations -- On list
 Increase/Decrease strength of enemies -- Done (Range from 60% to 200% change in encounter strength)
 Increase/Decrease frequency of Only One Villager checks -- Coded
-Option to stop animals from roaming -- Coded
+Option to stop animals from roaming -- Done
 
 **Optional**
 Always Allow Curses on Start New Game options screen. -- Done
 Option to stop enemies from attacking (allowing player to combat them one at a time)
 Option to be able to pick up portals/enemies
-Bigger/Smaller Sheds/Warehouses -- Coded
-Increase/Decrease time for food to grow (for VeryEasy-/VeryHard+) -- Coded
+Bigger/Smaller Sheds/Warehouses -- Done
+Increase/Decrease time for food to grow (for VeryEasy-/VeryHard+) -- Done
 DLC: Greed demands of more than 2 items are reduced by 1 or durations greater than 1 are increased by 1 for VeryEasy and easier difficulties -- Coded
 DLC: Greed demands of more than 2 items are increasedby 1 or durations greater than 1 are reduced by 1 for VeryHard and harder difficulties -- Coded
 DLC: Old Villagers can't Breed -- Coded

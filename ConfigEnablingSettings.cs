@@ -2,6 +2,7 @@
 using HarmonyLib;
 using System.Reflection;
 using System.Reflection.Emit;
+using Newtonsoft.Json.Linq;
 
 namespace DifficultyModNS
 {
@@ -41,19 +42,29 @@ namespace DifficultyModNS
 
         private static CustomButton headerText;
 
+        private T LoadConfigEntry<T>(string key, T defValue)
+        {
+            if (Config.Data.TryGetValue(key, out JToken value))
+            {
+                return value.Value<T>();
+            }
+            return defValue;
+        }
+
         public ConfigEnabling(string name, ConfigFile config)
         {
             Name = name;
             Config = config;
             ValueType = typeof(ConfigEnabling);
-            enabling.rarePortals = Config.GetValue<bool>("difficultymod_enableRarePortals");
-            enabling.portals = Config.GetValue<bool>("difficultymod_enablePortals");
-            enabling.pirates = Config.GetValue<bool>("difficultymod_enablePirates");
-            enabling.locations = Config.GetValue<bool>("difficultymod_enableLocationEnemies");
-            enabling.roamingAnimals = Config.GetValue<bool>("difficultymod_enableRangeFreeAnimals");
-            enabling.cursesAtStart = Config.GetValue<bool>("difficultymod_enableCursesAtStart");
-            storageCapacity = (StorageCapacity)Config.GetValue<int>("difficultymod_storage_capacity");
             toolTip = SokLoc.Translate("difficultymod_config_enabling_tooltip");
+
+            enabling.rarePortals = LoadConfigEntry<bool>("difficultymod_enableRarePortals", enabling.rarePortals);
+            enabling.portals = LoadConfigEntry<bool>("difficultymod_enablePortals", enabling.portals);
+            enabling.pirates = LoadConfigEntry<bool>("difficultymod_enablePirates", enabling.pirates);
+            enabling.locations = LoadConfigEntry<bool>("difficultymod_enableLocationEnemies", enabling.locations);
+            enabling.roamingAnimals = LoadConfigEntry<bool>("difficultymod_enableRangeFreeAnimals", enabling.roamingAnimals);
+            enabling.cursesAtStart = LoadConfigEntry<bool>("difficultymod_enableCursesAtStart", enabling.cursesAtStart);
+            storageCapacity = (StorageCapacity)LoadConfigEntry<int>("difficultymod_storage_capacity", (int)storageCapacity);
 
             UI = new ConfigUI()
             {
@@ -148,6 +159,7 @@ namespace DifficultyModNS
             {
                 if (storageCapacity == StorageCapacity.Enormous) storageCapacity = StorageCapacity.Small;
                 else ++storageCapacity;
+                btnStorage.TooltipText = SokLoc.Translate($"difficultymod_config_storage_{storageCapacity}_tooltip");
                 btnStorage.TextMeshPro.text = ButtonAllowText(false, "storage");
                 Config.Data["difficultymod_storage_capacity"] = (int)storageCapacity;
             };
@@ -198,10 +210,10 @@ namespace DifficultyModNS
             }
             else
             {
-                SokTerm term = SokLoc.instance.CurrentLocSet.GetTerm($"difficultymod_config_storage_tooltip");
+                SokTerm term = SokLoc.instance.CurrentLocSet.GetTerm($"difficultymod_config_storage_{storageCapacity}_tooltip");
                 if (term != null)
                 {
-                    btn.TooltipText = SokLoc.Translate($"difficultymod_config_storage_{place}_tooltip");
+                    btn.TooltipText = SokLoc.Translate($"difficultymod_config_storage_{storageCapacity}_tooltip");
                 }
             }
             return btn;
@@ -269,7 +281,7 @@ namespace DifficultyModNS
                     .Set(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(Animal), "CanMove"))
                     .InstructionEnumeration()
                     .ToList();
-                result.ForEach(instruction => DifficultyMod.Log($"{instruction}"));
+//                result.ForEach(instruction => DifficultyMod.Log($"{instruction}"));
                 DifficultyMod.Log($"Exiting Instructions in {instructions.Count()}, instructions out {result.Count()}");
                 return result;
             }
