@@ -6,7 +6,7 @@ namespace DifficultyModNS
 {
     public partial class DifficultyMod : Mod
     {
-        public void SetupStrengthMultiplier()
+        public void ApplyStrengthMultiplier()
         {
             float value = 1.0f;
             switch (difficulty)

@@ -9,7 +9,7 @@ namespace DifficultyModNS
 {
     public partial class DifficultyMod : Mod
     {
-        public void SetupNewVillagerChecks()
+        public void ApplyNewVillagerChecks()
         {
             switch (difficulty)
             {

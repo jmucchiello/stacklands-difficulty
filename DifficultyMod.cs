@@ -1,8 +1,10 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections;
+using System.IO;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace DifficultyModNS
 {
@@ -27,27 +29,30 @@ namespace DifficultyModNS
         {
             SetupConfig();
             SetupShowDifficulty();
+//            icon = ResourceHelper.LoadSpriteFromPath(Path + "/icon.png");
             ApplySettings();
-            Log($"Count: {GameScreen.instance.transform.childCount}");
+            InputController.instance.PlayerInput.actions["time_pause"].Disable();
+            InputController.instance.PlayerInput.actions["time_3"].Disable();
             Logger.Log("Ready!");
         }
-
+//        public Sprite icon;
         public void SetupConfig()
         {
+            new ConfigFreeText("difficultymod_label_gameplay", Config, null);
             configDifficulty = new ConfigDifficulty("difficultymod_difficulty", Config, DifficultyType.Normal);
             configEnabling = new ConfigEnabling("difficultymod_enabling", Config);
             configSpawnSites = new ConfigSpawnSites("difficultymod_spawning", Config, SpawnSites.Anywhere);
-            configShowDifficulty = new ConfigEntry<bool>("difficultymod_showdifficulty", Config, true, new ConfigUI()
-            {
-                NameTerm = "difficultymod_showdifficulty",
-                TooltipTerm = "difficultymod_showdifficulty_tooltip"
-            });
+            new ConfigEmtySpace(Config);
+            new ConfigFreeText("difficultymod_label_modsettings", Config, null);
+            ConfigShowDifficulty();
             ConfigFreeText configDefaults = new("none", Config, ConfigEntryModalHelper.RightAlign(SokLoc.Translate("difficultymod_defaults")));
-            configDefaults.Clicked += delegate (ConfigEntryBase c)
+            configDefaults.Clicked += delegate (ConfigEntryBase c, CustomButton _)
             {
+                DifficultyMod.Log($"configDefaults.clicked called");
                 configDifficulty.SetDefaults();
                 configEnabling.SetDefaults();
                 configSpawnSites.SetDefaults();
+                configShowDifficulty.SetDefaults();
             };
 
             Config.OnSave = ApplySettings;
@@ -59,13 +64,14 @@ namespace DifficultyModNS
             BlueprintStartTimer_Patch.modifiers.Clear();
             difficulty = configDifficulty.Value;
             Log($"Overall Difficulty set to {difficulty}");
-            SetupSpawnSites();
-            SetupSummoningFrequency();
-            SetupStrengthMultiplier();
-            SetupFoodMultiplier();
-            SetupNewVillagerChecks();
-            SetupStorageCapacity();
-            SetupDLC();
+            ApplySpawnSites();
+            ApplySummoningFrequency();
+            ApplyStrengthMultiplier();
+            ApplyFoodMultiplier();
+            ApplyNewVillagerChecks();
+            ApplyStorageCapacity();
+            ApplyDLC();
+            NoPauseGame.Setup();
             ApplyShowDifficulty();
         }
 
@@ -92,7 +98,7 @@ namespace DifficultyModNS
             return false;
         }
 
-        public void SetupFoodMultiplier()
+        public void ApplyFoodMultiplier()
         {
             float foodBlueprintModifier = Difficulty switch
             {
@@ -108,7 +114,7 @@ namespace DifficultyModNS
                 {
                     if (BlueprintCreatesCardsOfType(bp, typeof(Food)))
                     {
-                        Log($"SetupFoodMultiplier adding {bp.Id}");
+//                        Log($"SetupFoodMultiplier adding {bp.Id}");
                         new BlueprintTimerModifier() { blueprintId = bp.Id, subprintindex = -1, multiplier = foodBlueprintModifier }.AddToList();
                     }
                 }
@@ -116,7 +122,7 @@ namespace DifficultyModNS
             }
         }
 
-        public void SetupStorageCapacity()
+        public void ApplyStorageCapacity()
         {
             switch (storageCapacity)
             {
@@ -140,7 +146,7 @@ namespace DifficultyModNS
             Log($"Storage Capacity Shed {CardCapIncrease.ShedIncrease} Warehouse {CardCapIncrease.WarehouseIncrease}");
         }
 
-        public void SetupSummoningFrequency()
+        public void ApplySummoningFrequency()
         {
             switch (difficulty)
             {

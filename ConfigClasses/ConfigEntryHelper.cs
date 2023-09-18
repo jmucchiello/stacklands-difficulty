@@ -5,16 +5,13 @@ using UnityEngine;
 
 namespace DifficultyModNS
 {
-    public abstract class ConfigEntryModalHelper : ConfigEntryBase
+    public abstract class ConfigEntryHelper : ConfigEntryBase
     {
         public virtual void SetDefaults() { }
 
-        protected static ModalScreen popup;
-
-        public void CloseMenu()
+        public static string CenterAlign(string txt)
         {
-            GameCanvas.instance.CloseModal();
-            popup = null;
+            return "<align=center>" + txt + "</align>";
         }
 
         public static string RightAlign(string txt)
@@ -43,5 +40,27 @@ namespace DifficultyModNS
             btn.TooltipText = tooltip;
             return btn;
         }
+    }
+
+    public class ConfigEmtySpace : ConfigEntryBase
+    {
+        private RectTransform spacer1, spacer2;
+        public override object BoxedValue { get => new object(); set => _ = value; }
+
+        public ConfigEmtySpace(ConfigFile Config)
+        {
+            Name = "none";
+            ValueType = typeof(object);
+            Config.Entries.Add(this);
+            UI = new ConfigUI()
+            {
+                Hidden = true,
+                OnUI = delegate {
+                    spacer1 = UnityEngine.Object.Instantiate(ModOptionsScreen.instance.SpacerPrefab, ModOptionsScreen.instance.ButtonsParent);
+                    spacer2 = UnityEngine.Object.Instantiate(ModOptionsScreen.instance.SpacerPrefab, ModOptionsScreen.instance.ButtonsParent);
+                }
+            };
+        }
+
     }
 }

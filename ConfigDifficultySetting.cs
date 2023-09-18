@@ -25,6 +25,10 @@ namespace DifficultyModNS
             {
                 return SokLoc.Translate("difficultymod_config_difficulty") + " " + ColorText("blue", SokLoc.Translate($"difficultymod_config_difficulty_{(int)BoxedValue}"));
             };
+            onDisplayAnchorTooltip = delegate ()
+            {
+                return SokLoc.Translate("difficultymod_config_difficulty_tooltip");
+            };
             onDisplayEnumText = delegate (DifficultyType s)
             {
                 return SokLoc.Translate($"difficultymod_config_difficulty_{(int)(object)s}");
@@ -44,6 +48,12 @@ namespace DifficultyModNS
 
             CloseButtonText = SokLoc.Translate("difficultymod_closemenu");
             currentValueColor = Color.blue;
+        }
+
+        public override void SetDefaults()
+        {
+            DifficultyMod.Log($"ConfigDifficulty SetDefaults called");
+            base.SetDefaults();
         }
     }
 }

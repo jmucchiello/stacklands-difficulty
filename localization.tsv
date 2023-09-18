@@ -14,28 +14,28 @@ difficultymod_defaults		Reset Defaults
 difficultymod_closemenu		Close Menu
 difficultymod_config_location_header		Click here to modify where enemies will spawn
 difficultymod_config_location_tooltip		A popup will open when this is clicked
-difficultymod_config_enabling_header		Click here to modify various game features
+difficultymod_config_enabling_header		Click here to modify various game features...
 difficultymod_config_enabling_menu_text		Game Features Options
 difficultymod_config_enabling_menu_tooltip		Click on a feature to modify it. An asterisk* indicates the current choice is the default choice.
 difficultymod_config_enabling_tooltip		A popup will open when this is clicked
-difficultymod_config_enabling_rare_enable		Rare Portals are Enabled *
-difficultymod_config_enabling_rare_disable		Rare Portals are Disabled
+difficultymod_config_enabling_rare_enable		Rare Portals are <color=blue>Enabled</color> *
+difficultymod_config_enabling_rare_disable		Rare Portals are <color=blue>Disabled</color>
 difficultymod_config_enabling_rare_noportals		<size=75%>Enable Strange Portals to Modify Rare Portals</size>
 difficultymod_config_enabling_rare_tooltip		Disabling the portals means you must find your own way to the Dark Forest
-difficultymod_config_enabling_strange_enable		Strange Portals are Enabled *
-difficultymod_config_enabling_strange_disable		Strange Portals are Disabled
+difficultymod_config_enabling_strange_enable		Strange Portals are <color=blue>Enabled</color> *
+difficultymod_config_enabling_strange_disable		Strange Portals are <color=blue>Disabled</color>
 difficultymod_config_enabling_strange_tooltip		Disabling the portals means you must find your own way to the Dark Forest
-difficultymod_config_enabling_pirate_enable		Pirate Ships are Enabled *
-difficultymod_config_enabling_pirate_disable		Disable Pirate Ships
+difficultymod_config_enabling_pirate_enable		Pirate Ships are <color=blue>Enabled</color> *
+difficultymod_config_enabling_pirate_disable		Pirate Ships are <color=blue>Disabled</color>
 difficultymod_config_enabling_pirate_tooltip		When disabled, you won't be attacked by#pirates and you will never befriend a pirate.
-difficultymod_config_enabling_location_enable		Enemy Can Spawn from Purple Locations *
-difficultymod_config_enabling_location_disable		Enemy Cannot Spawns from Purple Locations
+difficultymod_config_enabling_location_enable		Enemies <color=blue>Can Spawn</color> from Purple Locations *
+difficultymod_config_enabling_location_disable		Enemies <color=blue>Cannot Spawn</color> from Purple Locations
 difficultymod_config_enabling_location_tooltip		Purple Locations include Graveyards, Mountains, Forests, etc.
-difficultymod_config_enabling_rangefree_enable		Animals can Roam the Board *
-difficultymod_config_enabling_rangefree_disable		Animals cannot Roam the Board
+difficultymod_config_enabling_rangefree_enable		Animals <color=blue>Can Roam</color> the Board *
+difficultymod_config_enabling_rangefree_disable		Animals <color=blue>Cannot Roam</color> the Board
 difficultymod_config_enabling_rangefree_tooltip		When disabled, animals will not move around.#It still requires an Animal Pen to stack animals.
-difficultymod_config_enabling_curses_enable		Curses can always be selected on the New Game Screen
-difficultymod_config_enabling_curses_disable		Curses can only be selected on the New Game Screen if previouly defeated *
+difficultymod_config_enabling_curses_enable		On the New Game Screen, Curses are always available to be selected
+difficultymod_config_enabling_curses_disable		On the New Game Screen, Curses must be defeated in the save game to be selected *
 difficultymod_config_enabling_curses_tooltip		When allowed, you can always start a new game with Curses.#When defaulted, you have to defeat the curse in#each save game to enable curses when starting a new game
 difficultymod_config_storage		Shed/Warehouse Storage#   Capacity
 difficultymod_config_storage_Small		Small
@@ -49,6 +49,7 @@ difficultymod_config_storage_Enormous_tooltip		Sheds store 10 cards, Warehouses 
 difficultymod_config_difficulty_menu_text		Difficulty Setting
 difficultymod_config_difficulty_menu_tooltip		Affects the overall strength of enemies and frequency of random events.
 difficultymod_config_difficulty		Choose the Game Difficulty
+difficultymod_config_difficulty_tooltip		Click to change difficulty setting
 difficultymod_config_difficulty_0		Very Easy
 difficultymod_config_difficulty_1		Easy
 difficultymod_config_difficulty_2		Normal (default)
@@ -56,13 +57,26 @@ difficultymod_config_difficulty_3		Challenging
 difficultymod_config_difficulty_4		Hard
 difficultymod_config_difficulty_5		Very Hard
 difficultymod_config_difficulty_6		Brutal (Good Luck!)
-difficultymod_config_difficulty_0_tooltip		Enemies are weak,#Portals are less frequent,#Food is produced faster
+difficultymod_config_difficulty_0_tooltip		Enemies are weak#Portals are less frequent#Food is produced faster
 difficultymod_config_difficulty_1_tooltip		Enemies are a little weaker
 difficultymod_config_difficulty_2_tooltip		How the game runs without this mod
 difficultymod_config_difficulty_3_tooltip		Enemies are a little stronger
-difficultymod_config_difficulty_4_tooltip		Enemies are stronger,#Portals are more frequent
-difficultymod_config_difficulty_5_tooltip		Enemies are even stronger,#Portals are more frequent,#Food is produced slower
-difficultymod_config_difficulty_6_tooltip		Enemies are twice as strong as normal,#Portal are very frequent,#Food is produced slower
+difficultymod_config_difficulty_4_tooltip		Enemies are stronger#Portals are more frequent
+difficultymod_config_difficulty_5_tooltip		Enemies are even stronger#Portals are more frequent#Food is produced slower
+difficultymod_config_difficulty_6_tooltip		Enemies are twice as strong as normal#Portals are very frequent#Food is produced slower
 difficultymod_difficulty		Difficulty:
 difficultymod_showdifficulty		Show Difficulty setting in game
+difficultymod_showdifficulty_Never		Never
+difficultymod_showdifficulty_OnPause		When Paused
+difficultymod_showdifficulty_Always		Always
+difficultymod_showdifficulty_Never_tooltip		Difficulty setting will not be visible during game play.
+difficultymod_showdifficulty_OnPause_tooltip		Difficulty setting will display when the game is paused.
+difficultymod_showdifficulty_Always_tooltip		Difficulty setting is always visible during game play.
 difficultymod_showdifficulty_tooltip		When enabled, the difficulty setting will#appear at the top of the game screen.
+difficultymod_showpeacemode		Show Peacemode Toggle
+difficultymod_showpeacemode_tooltip		When the difficulty setting is visible in#game, a toggle for peaceful mode appears#next to it when this is enabled.
+difficultymod_game_difficulty		Game Difficulty
+difficultymod_game_peacemode		Peaceful Mode
+difficultymod_config_peacemode_tooltip		No enemies spawn in peaceful mode. Click to toggle peaceful mode on or off.
+difficultymod_label_gameplay		Game Play Settings
+difficultymod_label_modsettings		Mod Settings

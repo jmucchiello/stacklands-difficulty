@@ -8,7 +8,7 @@ namespace DifficultyModNS
 {
     public partial class DifficultyMod : Mod
     {
-        public void SetupDLC()
+        public void ApplyDLC()
         {
             SetupHappinessCards();
             SetupDeathLifestages();

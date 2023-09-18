@@ -174,7 +174,7 @@ namespace DifficultyModNS
             if (place == "storage")
             {
                 return SokLoc.Translate($"difficultymod_config_storage") +
-                       ": " + SokLoc.Translate($"difficultymod_config_storage_{storageCapacity}");
+                       ": " + ColorText(Color.blue, SokLoc.Translate($"difficultymod_config_storage_{storageCapacity}"));
             }
             else if (place == "rare" && enabling.portals)
             {
@@ -182,7 +182,7 @@ namespace DifficultyModNS
             }
             else if (place == "rare" && !enabling.portals)
             {
-                return "<color=#bfbfbf><s>" + SokLoc.Translate($"difficultymod_config_enabling_{place}_noportals") + "</s></color>";
+                return ColorText("#bfbfbf", "<s>" + SokLoc.Translate("difficultymod_config_enabling_rare_noportals") + "</s>");
             }
             else
             {

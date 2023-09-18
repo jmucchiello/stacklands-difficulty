@@ -15,7 +15,7 @@ namespace DifficultyModNS
 
         private float lowX = 0f, highX = 1f;
         private float lowZ = 0f, highZ = 1f;
-        public void SetupSpawnSites()
+        public void ApplySpawnSites()
         {
             switch (configSpawnSites.Value)
             {
