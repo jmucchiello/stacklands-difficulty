@@ -13,7 +13,7 @@ namespace DifficultyModNS
         public DifficultyType difficulty;
         public ConfigDifficulty configDifficulty;
 
-        public static DifficultyType Difficulty { get => DifficultyMod.instance.difficulty; }
+        public static DifficultyType Difficulty { get => instance.difficulty; }
     }
 
     public class ConfigDifficulty : ConfigEntryEnum<DifficultyType>
@@ -21,9 +21,10 @@ namespace DifficultyModNS
         public ConfigDifficulty(string name, ConfigFile configFile, DifficultyType defaultValue, ConfigUI UI = null)
             : base(name, configFile, defaultValue, UI)
         {
+            currentValueColor = Color.blue;
             onDisplayAnchorText = delegate ()
             {
-                return SokLoc.Translate("difficultymod_config_difficulty") + " " + ColorText("blue", SokLoc.Translate($"difficultymod_config_difficulty_{(int)BoxedValue}"));
+                return SokLoc.Translate("difficultymod_config_difficulty") + " " + ColorText(currentValueColor, SokLoc.Translate($"difficultymod_config_difficulty_{(int)Value}"));
             };
             onDisplayAnchorTooltip = delegate ()
             {
@@ -47,7 +48,6 @@ namespace DifficultyModNS
             };
 
             CloseButtonText = SokLoc.Translate("difficultymod_closemenu");
-            currentValueColor = Color.blue;
         }
 
         public override void SetDefaults()

@@ -22,20 +22,17 @@ namespace DifficultyModNS
         private void Awake()
         {
             instance = this;
-            WMCreateCard_Patch.WM_IsLoadingSaveRound = new Traverse(WorldManager.instance).Field<bool>("IsLoadingSaveRound");
+            WMCreateCard_Patch.WM_IsLoadingSaveRound = new Traverse(I.WM).Field<bool>("IsLoadingSaveRound");
             Harmony.PatchAll();
         }
         public override void Ready()
         {
             SetupConfig();
             SetupShowDifficulty();
-//            icon = ResourceHelper.LoadSpriteFromPath(Path + "/icon.png");
             ApplySettings();
-            InputController.instance.PlayerInput.actions["time_pause"].Disable();
-            InputController.instance.PlayerInput.actions["time_3"].Disable();
             Logger.Log("Ready!");
         }
-//        public Sprite icon;
+
         public void SetupConfig()
         {
             new ConfigFreeText("difficultymod_label_gameplay", Config, null);
@@ -45,8 +42,8 @@ namespace DifficultyModNS
             new ConfigEmtySpace(Config);
             new ConfigFreeText("difficultymod_label_modsettings", Config, null);
             ConfigShowDifficulty();
-            ConfigFreeText configDefaults = new("none", Config, ConfigEntryModalHelper.RightAlign(SokLoc.Translate("difficultymod_defaults")));
-            configDefaults.Clicked += delegate (ConfigEntryBase c, CustomButton _)
+            ConfigFreeText configResetDefaults = new("none", Config, ConfigEntryModalHelper.RightAlign(SokLoc.Translate("difficultymod_reset_defaults")));
+            configResetDefaults.Clicked += delegate (ConfigEntryBase c, CustomButton _)
             {
                 DifficultyMod.Log($"configDefaults.clicked called");
                 configDifficulty.SetDefaults();
@@ -56,6 +53,13 @@ namespace DifficultyModNS
             };
 
             Config.OnSave = ApplySettings;
+        }
+
+        public void SetupNoPause()
+        {
+            InputController.instance.PlayerInput.actions["time_pause"].Disable();
+            InputController.instance.PlayerInput.actions["time_3"].Disable();
+            NoPauseGame.Setup();
         }
 
         public void ApplySettings()
@@ -71,16 +75,15 @@ namespace DifficultyModNS
             ApplyNewVillagerChecks();
             ApplyStorageCapacity();
             ApplyDLC();
-            NoPauseGame.Setup();
             ApplyShowDifficulty();
         }
 
         public static bool AnyCardInCardBagIsOfType(CardBag cardBag, Type type)
         {
-            List<string> cards = cardBag.GetCardsInBag(WorldManager.instance.GameDataLoader);
+            List<string> cards = cardBag.GetCardsInBag(I.WM.GameDataLoader);
             foreach (string card in cards)
             {
-                if (type.IsAssignableFrom(WorldManager.instance.GameDataLoader.GetCardFromId(card).GetType())) return true;
+                if (type.IsAssignableFrom(I.WM.GameDataLoader.GetCardFromId(card).GetType())) return true;
             }
             return false;
         }
@@ -89,10 +92,10 @@ namespace DifficultyModNS
         {
             foreach (Subprint sp in bp.Subprints)
             {
-                if (!String.IsNullOrEmpty(sp.ResultCard) && WorldManager.instance.GameDataLoader.GetCardFromId(sp.ResultCard).GetType().Equals(type)) return true;
+                if (!String.IsNullOrEmpty(sp.ResultCard) && I.WM.GameDataLoader.GetCardFromId(sp.ResultCard).GetType().Equals(type)) return true;
                 foreach (string s in sp.ExtraResultCards)
                 {
-                    if (!String.IsNullOrEmpty(s) && WorldManager.instance.GameDataLoader.GetCardFromId(s).GetType().Equals(type)) return true;
+                    if (!String.IsNullOrEmpty(s) && I.WM.GameDataLoader.GetCardFromId(s).GetType().Equals(type)) return true;
                 }
             }
             return false;
@@ -110,7 +113,7 @@ namespace DifficultyModNS
             if (foodBlueprintModifier != 1f)
             {
                 new BlueprintTimerModifier() { blueprintId = "blueprint_growth", subprintindex = -1, multiplier = foodBlueprintModifier }.AddToList();
-                foreach (Blueprint bp in WorldManager.instance.GameDataLoader.BlueprintPrefabs)
+                foreach (Blueprint bp in I.WM.GameDataLoader.BlueprintPrefabs)
                 {
                     if (BlueprintCreatesCardsOfType(bp, typeof(Food)))
                     {
@@ -124,7 +127,7 @@ namespace DifficultyModNS
 
         public void ApplyStorageCapacity()
         {
-            switch (storageCapacity)
+            switch (GetStorageCapacity)
             {
                 case StorageCapacity.Small:
                     CardCapIncrease.ShedIncrease = 3;
@@ -156,17 +159,17 @@ namespace DifficultyModNS
                     SpecialEvents_Patch.FrequencyOfTravellingCart = 0.02f;
                     MommaCrab_Patch.MommaCrabFrequency = 1;
                     break;
-                case <= DifficultyType.VeryEasy:
-                    SpecialEvents_Patch.PortalDivisor = 6;
-                    SpecialEvents_Patch.PirateDivisor = 10;
-                    SpecialEvents_Patch.FrequencyOfTravellingCart = 0.15f;
-                    MommaCrab_Patch.MommaCrabFrequency = 4;
-                    break;
                 case >= DifficultyType.Hard:
                     SpecialEvents_Patch.PortalDivisor = 3;
                     SpecialEvents_Patch.PirateDivisor = 6;
                     SpecialEvents_Patch.FrequencyOfTravellingCart = 0.05f;
                     MommaCrab_Patch.MommaCrabFrequency = 2;
+                    break;
+                case <= DifficultyType.VeryEasy:
+                    SpecialEvents_Patch.PortalDivisor = 6;
+                    SpecialEvents_Patch.PirateDivisor = 10;
+                    SpecialEvents_Patch.FrequencyOfTravellingCart = 0.15f;
+                    MommaCrab_Patch.MommaCrabFrequency = 4;
                     break;
                 default:
                     SpecialEvents_Patch.PortalDivisor = 4;
@@ -176,6 +179,7 @@ namespace DifficultyModNS
                     break;
             }
             if (!AllowStrangePortals) SpecialEvents_Patch.PortalDivisor = 1000000;
+            if (!AllowRarePortals) I.CRV.StrangePortalSpawns = 1000000;
             if (!AllowPirateShips) SpecialEvents_Patch.PirateDivisor = 1000000;
             DifficultyMod.Log($"Portal Checks? {AllowStrangePortals} Frequency {SpecialEvents_Patch.PortalDivisor} Rare Portals? {AllowRarePortals}");
             DifficultyMod.Log($"Pirate Ships? {AllowPirateShips} Frequency {SpecialEvents_Patch.PirateDivisor} Momma Crab Freequncy: {MommaCrab_Patch.MommaCrabFrequency}");

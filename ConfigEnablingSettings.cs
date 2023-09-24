@@ -15,7 +15,7 @@ namespace DifficultyModNS
     {
         public ConfigEnabling configEnabling;
 
-        public static StorageCapacity storageCapacity => instance.configEnabling.storageCapacity;
+        public static StorageCapacity GetStorageCapacity => instance.configEnabling.storageCapacity;
         public static bool AllowSadEvents => true;
         public static bool AllowMommaCrab => true;
         public static bool AllowRarePortals => instance.configEnabling.enabling.rarePortals;
@@ -25,7 +25,6 @@ namespace DifficultyModNS
         public static bool AllowAnimalsToRoam => instance.configEnabling.enabling.roamingAnimals;
         public static bool AllowCursesAtStart => instance.configEnabling.enabling.cursesAtStart;
 
-        public static StorageCapacity GetStorageCapacity => instance.configEnabling.storageCapacity;
     }
 
     public class Enabling
@@ -135,7 +134,7 @@ namespace DifficultyModNS
                 Config.Data["difficultymod_enableLocationEnemies"] = enabling.locations;
             };
 
-            btnAnimals = NewButton(enabling.locations, "rangefree");
+            btnAnimals = NewButton(enabling.roamingAnimals, "rangefree");
             btnAnimals.Clicked += delegate
             {
                 enabling.roamingAnimals = !enabling.roamingAnimals;
@@ -143,7 +142,7 @@ namespace DifficultyModNS
                 Config.Data["difficultymod_enableRangeFreeAnimals"] = enabling.roamingAnimals;
             };
 
-            if (WorldManager.instance.IsSpiritDlcActive())
+            if (I.WM.IsSpiritDlcActive())
             {
                 btnCurses = NewButton(enabling.cursesAtStart, "curses");
                 btnCurses.Clicked += delegate
@@ -164,7 +163,7 @@ namespace DifficultyModNS
                 Config.Data["difficultymod_storage_capacity"] = (int)storageCapacity;
             };
 
-            popup.AddOption(RightAlign(SokLoc.Translate("difficultymod_defaults")), SetDefaults);
+            popup.AddOption(RightAlign(SokLoc.Translate("difficultymod_reset_defaults")), SetDefaults);
             popup.AddOption(RightAlign(SokLoc.Translate("difficultymod_closemenu")), CloseMenu);
             GameCanvas.instance.OpenModal();
         }
@@ -231,7 +230,7 @@ namespace DifficultyModNS
                 btnPortals.TextMeshPro.text = ButtonAllowText(enabling.portals, "strange");
                 btnRare.TextMeshPro.text = ButtonAllowText(enabling.rarePortals, "rare");
                 btnRare.enabled = enabling.portals;
-                if (WorldManager.instance.IsSpiritDlcActive())
+                if (I.WM.IsSpiritDlcActive())
                 {
                     btnCurses.TextMeshPro.text = ButtonAllowText(enabling.cursesAtStart, "curses");
                 }
@@ -247,49 +246,13 @@ namespace DifficultyModNS
         }
     }
 
-    [HarmonyPatch(typeof(Animal))]
     public class RangeFreeAnimals
     {
-        [HarmonyPostfix]
-        [HarmonyPatch(nameof(Animal.CanMove), MethodType.Getter)]
-        static void Postfix(Animal __instance, ref bool __result)
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Animal),"Move")]
+        static bool Prefix()
         {
-            if (!DifficultyMod.AllowAnimalsToRoam)
-            {
-                __result = false;
-            }
-        }
-
-        [HarmonyTranspiler]
-        [HarmonyPatch(nameof(Animal.UpdateCard))]
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            /***
-             *      Changed Animal.UpdateCard:
-             *      		if (CreateTimer >= CreateTime && (moveFlag || InAnimalPen))
-             *      to
-             *              if (CreateTimer >= CreateTime && (CanMove || InAnimalPen))
-             *
-             ***/
-            try
-            {
-                Type myClass = typeof(SpecialEvents_Patch);
-                List<CodeInstruction> result = new CodeMatcher(instructions)
-                    .MatchStartForward(
-                        new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(Mob),"moveFlag"))
-                    )
-                    .Set(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(Animal), "CanMove"))
-                    .InstructionEnumeration()
-                    .ToList();
-//                result.ForEach(instruction => DifficultyMod.Log($"{instruction}"));
-                DifficultyMod.Log($"Exiting Instructions in {instructions.Count()}, instructions out {result.Count()}");
-                return result;
-            }
-            catch (Exception e)
-            {
-                DifficultyMod.LogError("Failed to Transpile EndOfMonthCutscenes.SpecialEvents" + e.ToString());
-                return instructions;
-            }
+            return DifficultyMod.AllowAnimalsToRoam;
         }
     }
 

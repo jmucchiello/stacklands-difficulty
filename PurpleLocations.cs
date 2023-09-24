@@ -36,7 +36,7 @@ namespace DifficultyModNS
 
         static bool isEnemy(string cardId)
         {
-            CardData cd = WorldManager.instance.GameDataLoader.GetCardFromId(cardId);
+            CardData cd = I.WM.GameDataLoader.GetCardFromId(cardId);
             return cd != null && cd is Enemy;
         }
     }

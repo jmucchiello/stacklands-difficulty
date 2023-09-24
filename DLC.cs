@@ -49,7 +49,7 @@ namespace DifficultyModNS
                 AgingDetermination.Adult = 9;
                 AgingDetermination.Elderly = 12;
             }
-            Log($"Lifespans - Teens: {AgingDetermination.Teenager}, Adults: {AgingDetermination.Adult}, Elderly: {AgingDetermination.Elderly}");
+            Log($"Death Curse Lifespans - Teens: {AgingDetermination.Teenager}, Adults: {AgingDetermination.Adult}, Elderly: {AgingDetermination.Elderly}");
         }
 
         public void SetupSadEventFrequency()

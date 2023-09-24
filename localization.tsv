@@ -10,7 +10,7 @@ difficultymod_config_spawn_menu_text		Allowed Spawn Location
 difficultymod_config_spawn_menu_tooltip		Summoned items only apply to Portals, Pirate Ships, Traveling Cart, etc.
 difficultymod_allon		Allow All
 difficultymod_alloff		Disallow All
-difficultymod_defaults		Reset Defaults
+difficultymod_reset_defaults		Reset Defaults
 difficultymod_closemenu		Close Menu
 difficultymod_config_location_header		Click here to modify where enemies will spawn
 difficultymod_config_location_tooltip		A popup will open when this is clicked
@@ -37,6 +37,9 @@ difficultymod_config_enabling_rangefree_tooltip		When disabled, animals will not
 difficultymod_config_enabling_curses_enable		On the New Game Screen, Curses are always available to be selected
 difficultymod_config_enabling_curses_disable		On the New Game Screen, Curses must be defeated in the save game to be selected *
 difficultymod_config_enabling_curses_tooltip		When allowed, you can always start a new game with Curses.#When defaulted, you have to defeat the curse in#each save game to enable curses when starting a new game
+difficultymod_config_enabling_peace_enable		Peaceful mode toggle in game is <color=blue>Enabled</color>
+difficultymod_config_enabling_peace_disable		Peaceful mode toggle in game is <color=blue>Disabled</color> *
+difficultymod_config_enabling_peace_tooltip		Allows you to enable/disable peaceful mode during play
 difficultymod_config_storage		Shed/Warehouse Storage#   Capacity
 difficultymod_config_storage_Small		Small
 difficultymod_config_storage_Normal		Normal *

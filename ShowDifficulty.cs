@@ -8,8 +8,7 @@ namespace DifficultyModNS
 
     public partial class DifficultyMod : Mod
     {
-        private InGameVisibility InGameVisibility = InGameVisibility.Always;
-        private GameObject showDifficulty;
+        private GameObject ShowIngameSettingsBox;
         private ConfigEntry<bool> configPeacemodeOption;
         private ConfigToggledEnum<InGameVisibility> configShowDifficulty;
         private GameObject ShowDifficultyBackground = null;
@@ -17,9 +16,10 @@ namespace DifficultyModNS
         private GameObject ShowPeacemodeBackground = null;
         private GameObject ShowPeacemodeText = null;
         private CustomButton ShowPeacemodeBtn = null;
-        private string peacemodeText;
 
-        private bool gameIsPaused = WorldManager.instance?.IsPlaying ?? true;
+        public static bool AllowPeacemodeToggle => instance.configPeacemodeOption.Value;
+
+        private bool gameIsPaused = I.WM?.IsPlaying ?? true;
 
         public static void GameIsPaused(bool flag)
         {
@@ -30,7 +30,7 @@ namespace DifficultyModNS
             }
         }
 
-        public static InGameVisibility inGameVisibility { get => instance?.InGameVisibility ?? InGameVisibility.Never; }
+        public static InGameVisibility InGameVisibility { get => instance?.configShowDifficulty.Value ?? InGameVisibility.Never; private set => instance.configShowDifficulty.Value = value; }
 
         private string ShowDifficultyVisibilityText()
         {
@@ -69,11 +69,11 @@ namespace DifficultyModNS
         public void SetupShowDifficulty()
         {
             Transform rb = GameScreen.instance.transform.Find("ResourcesBackground");
-            showDifficulty = UnityEngine.Object.Instantiate(rb).gameObject;
-            showDifficulty.name = "ShowDifficultyBox";
-            for (int i = 0; i < showDifficulty.transform.childCount; ++i)
+            ShowIngameSettingsBox = UnityEngine.Object.Instantiate(rb).gameObject;
+            ShowIngameSettingsBox.name = "ShowIngameSettingsBox";
+            for (int i = 0; i < ShowIngameSettingsBox.transform.childCount; ++i)
             {
-                GameObject go = showDifficulty.transform.GetChild(i).gameObject;
+                GameObject go = ShowIngameSettingsBox.transform.GetChild(i).gameObject;
                 if (go.name == "FoodBackground")
                 {
                     ShowDifficultyBackground = go;
@@ -82,72 +82,93 @@ namespace DifficultyModNS
                     ShowDifficultyText.name = "ShowDifficultyText";
                 }
                 else if (go.name == "MoneyBackground")
-                { // rip this out. Replace with TimeBackground.TimeText (Child 1)
+                {
                     ShowPeacemodeBackground = go;
                     ShowPeacemodeBackground.name = "ShowPeacemodeBackground";
                     ShowPeacemodeBtn = ShowPeacemodeBackground.AddComponent<CustomButton>();
                     ShowPeacemodeBtn.transform.localPosition = Vector3.zero;
                     ShowPeacemodeBtn.name = "ShowPeacemodeBtn";
-                    ShowPeacemodeBtn.Clicked += this.PeacemodeToggle;
+                    ShowPeacemodeBtn.Clicked += PeacemodeToggleClicked;
                     ShowPeacemodeBtn.enabled = true;
-                    peacemodeText = PeacemodeText();
+                    UpdatePeacemodeText();
 
                     ShowPeacemodeText = ShowPeacemodeBackground.transform.GetChild(0).gameObject;
                     ShowPeacemodeText.name = "ShowPeacemodeText";
-//                    ShowPeacemodeText.SetActive(false);
                 }
                 else go.SetActive(false);
             }
-            Log($"FoodBackground {ShowDifficultyBackground} FoodText {ShowDifficultyText}");
-            showDifficulty.transform.SetParent(GameScreen.instance.transform);
-            showDifficulty.transform.localPosition = new Vector3(0f, rb.transform.localPosition.y, rb.transform.position.z);
-            showDifficulty.transform.localScale = Vector3.one;
-            showDifficulty.transform.localRotation = Quaternion.identity;
-
-//            UnityEngine.UI.Image.Instantiate()
+            ShowIngameSettingsBox.transform.SetParent(GameScreen.instance.transform);
+            ShowIngameSettingsBox.transform.localPosition = new Vector3(0f, rb.transform.localPosition.y, rb.transform.position.z);
+            ShowIngameSettingsBox.transform.localScale = Vector3.one;
+            ShowIngameSettingsBox.transform.localRotation = Quaternion.identity;
         }
 
-        public void PeacemodeToggle()
+        public void PeacemodeToggleClicked()
         {
             Log("PeacemodeToggle clicked");
-            WorldManager.instance.CurrentRunOptions.IsPeacefulMode = !WorldManager.instance.CurrentRunOptions.IsPeacefulMode;
-            peacemodeText = PeacemodeText();
-            ShowPeacemodeBtn.TextMeshPro.text = peacemodeText;
+            I.WM.CurrentRunOptions.IsPeacefulMode = !I.WM.CurrentRunOptions.IsPeacefulMode;
+            UpdatePeacemodeText();
         }
 
-        public string PeacemodeText()
+        public void UpdatePeacemodeText()
         {
-            return SokLoc.Translate("label_debug_toggle_peaceful_mode", LocParam.Create("on_off", YesNo(WorldManager.instance.CurrentRunOptions.IsPeacefulMode)));
-//            return WorldManager.instance.CurrentRunOptions.IsPeacefulMode ? "Peace Mode: On" : "Peace Mode: Off";
+            string peacemodeText = SokLoc.Translate("label_debug_toggle_peaceful_mode", LocParam.Create("on_off", YesNo(I.WM.CurrentRunOptions.IsPeacefulMode)));
+            ShowPeacemodeBtn.TextMeshPro.text = peacemodeText;
         }
 
         public void ApplyShowDifficulty()
         {
-            if (inGameVisibility == InGameVisibility.Always || 
-                inGameVisibility == InGameVisibility.OnPause && gameIsPaused)
+            bool allowDifficulty = InGameVisibility == InGameVisibility.Always ||
+                                   (InGameVisibility == InGameVisibility.OnPause && gameIsPaused);
+            if (allowDifficulty)
             {
                 string stripParens = SokLoc.Translate($"difficultymod_difficulty") + " " + SokLoc.Translate($"difficultymod_config_difficulty_{(int)(object)difficulty}");
                 if (stripParens.Contains(" (")) stripParens = stripParens.Substring(0, stripParens.IndexOf(" ("));
                 TextMeshProUGUI mesh = ShowDifficultyText.GetComponent<TextMeshProUGUI>();
-                mesh.text = stripParens;
+                if (mesh != null) mesh.text = stripParens;
 
                 ShowInfoBox sib = ShowDifficultyBackground.GetComponent<ShowInfoBox>();
-                sib.InfoBoxText = SokLoc.Translate($"difficultymod_config_difficulty_{(int)(object)difficulty}_tooltip").Replace("\n",". ");
+                sib.InfoBoxText = SokLoc.Translate($"difficultymod_config_difficulty_{(int)(object)difficulty}_tooltip").Replace("\n", ". ");
                 sib.InfoBoxTitle = SokLoc.Translate("difficultymod_game_difficulty");
 
-                ShowPeacemodeBtn.TextMeshPro.text = peacemodeText;
-                sib = ShowPeacemodeBackground.GetComponent<ShowInfoBox>();
+                ShowDifficultyBackground.SetActive(true);
+            }
+            else ShowDifficultyBackground.SetActive(false);
+
+            if (AllowPeacemodeToggle)
+            {
+                UpdatePeacemodeText();
+                ShowInfoBox sib = ShowPeacemodeBackground.GetComponent<ShowInfoBox>();
                 sib.InfoBoxText = SokLoc.Translate($"difficultymod_config_peacemode_tooltip").Replace("\n", ". ");
                 sib.InfoBoxTitle = SokLoc.Translate("difficultymod_game_peacemode");
-
-                showDifficulty.SetActive(true);
+                ShowPeacemodeBtn.gameObject.SetActive(true);
             }
-            else showDifficulty.SetActive(false);
-        }
+            else ShowPeacemodeBtn.gameObject.SetActive(false);
 
+            ShowIngameSettingsBox.SetActive(AllowPeacemodeToggle || allowDifficulty);
+//            Log($"ApplyShowDifficulty {InGameVisibility} {gameIsPaused} {ShowDifficultyBackground.activeSelf} {ShowPeacemodeBtn.gameObject.activeSelf} {ShowIngameSettingsBox.activeSelf}");}
+        }
     }
 
-    [HarmonyPatch(typeof(GameScreen)), HarmonyPatch("Update")]
+    [HarmonyPatch(typeof(WorldManager)), HarmonyPatch("Update")]
+    public class ShowDifficulty
+    {
+        private static int dragdelay = 0;
+        static void Postfix()
+        {
+            if (I.WM.DraggingCard) dragdelay = 5;
+            else if (dragdelay > 0) --dragdelay;
+            if (DifficultyMod.InGameVisibility == InGameVisibility.OnPause && 
+                I.WM.IsPlaying && 
+                !I.WM.DraggingCard &&
+                dragdelay == 0)
+            {
+                DifficultyMod.GameIsPaused(GameScreen.instance.PausedText.IsActive());
+            }
+        }
+    }
+
+    //[HarmonyPatch(typeof(GameScreen)), HarmonyPatch("Update")]
     public class NoPauseGame
     {
         private static Traverse<bool> gameSpeedButtonClicked;
@@ -158,40 +179,22 @@ namespace DifficultyModNS
 
         static void Prefix()
         {
-            if ((WorldManager.instance.InAnimation || GameCanvas.instance.ModalIsOpen)
+            if ((I.WM.InAnimation || GameCanvas.instance.ModalIsOpen)
                 && gameSpeedButtonClicked.Value)
             {
                 gameSpeedButtonClicked.Value = false;
-                if (WorldManager.instance.SpeedUp == 0f)
+                if (I.WM.SpeedUp == 0f)
                 {
-                    WorldManager.instance.SpeedUp = 1f;
+                    I.WM.SpeedUp = 1f;
                 }
-                else if (WorldManager.instance.SpeedUp == 1f)
+                else if (I.WM.SpeedUp == 1f)
                 {
-                    WorldManager.instance.SpeedUp = 5f;
+                    I.WM.SpeedUp = 5f;
                 }
-                else if (WorldManager.instance.SpeedUp == 5f)
+                else if (I.WM.SpeedUp == 5f)
                 {
-                    WorldManager.instance.SpeedUp = 1f;
+                    I.WM.SpeedUp = 1f;
                 }
-            }
-        }
-    }
-
-    [HarmonyPatch(typeof(WorldManager)), HarmonyPatch("Update")]
-    public class ShowDifficulty
-    {
-        private static int dragdelay = 0;
-        static void Postfix()
-        {
-            if (WorldManager.instance.DraggingCard) dragdelay = 5;
-            else if (dragdelay > 0) --dragdelay;
-            if (DifficultyMod.inGameVisibility == InGameVisibility.OnPause && 
-                WorldManager.instance.IsPlaying && 
-                !WorldManager.instance.DraggingCard &&
-                dragdelay == 0)
-            {
-                DifficultyMod.GameIsPaused(GameScreen.instance.PausedText.IsActive());
             }
         }
     }

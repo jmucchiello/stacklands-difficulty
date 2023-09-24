@@ -9,7 +9,6 @@ Turning off rare strange portals -- Done
 Turning off all portals/pirates -- Done
 Increase/Decrease frequency of portals/pirates -- Coded
 Increase/Decrease frequency of Traveling Card/Momma Crab -- Coded
-Kraken -- will follow above spawning rules -- No action (Not sure how the tentacles will work)
 Remove hostiles from purple locations -- Coded
 Increase frequency of hostiles in purple locations -- On list
 Increase/Decrease strength of enemies -- Done (Range from 60% to 200% change in encounter strength)
@@ -27,3 +26,4 @@ DLC: Greed demands of more than 2 items are increasedby 1 or durations greater t
 DLC: Old Villagers can't Breed -- Coded
 DLC: Villagers live shorter/longer lives -- Coded
 DLC: Time to create Happiness from all sources increased/decreased -- Coded
+Increase starting resources in intro booster packs - On list

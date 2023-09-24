@@ -19,12 +19,12 @@ namespace DifficultyModNS
         {
             switch (configSpawnSites.Value)
             {
-                case SpawnSites.Anywhere: lowX = lowZ = 0f; highX = highZ = 1f; break;
-                case SpawnSites.Center: lowX = lowZ = 0.4f; highX = highZ = 0.6f; break;
-                case SpawnSites.LowerLeft: lowX = lowZ = 0f; highX = highZ = 0.2f; break;
-                case SpawnSites.LowerRight: lowX = 0.8f; lowZ = 0f; highX = 1f;  highZ = 0.2f; break;
-                case SpawnSites.UpperLeft: lowX = 0f; lowZ = 0.8f; highX = 0.2f;  highZ = 1f; break;
-                case SpawnSites.UpperRight: lowX = lowZ = 0.8f; highX = highZ = 1f; break;
+                case SpawnSites.Anywhere:   lowX = lowZ = 0.1f; highX = highZ = 0.9f; break;
+                case SpawnSites.Center:     lowX = lowZ = 0.4f; highX = highZ = 0.6f; break;
+                case SpawnSites.LowerLeft:  lowX = lowZ = 0.1f; highX = highZ = 0.3f; break;
+                case SpawnSites.UpperRight: lowX = lowZ = 0.7f; highX = highZ = 0.9f; break;
+                case SpawnSites.LowerRight: lowX = 0.7f; lowZ = 0.1f; highX = 0.9f; highZ = 0.3f; break;
+                case SpawnSites.UpperLeft:  lowX = 0.1f; lowZ = 0.7f; highX = 0.3f; highZ = 0.9f; break;
             }
             Log($"Spawn Location Ranges: X({lowX:F1} to {highX:F1}), Y({lowZ:F1} to {highZ:F1})");
         }
@@ -42,9 +42,10 @@ namespace DifficultyModNS
         public ConfigSpawnSites(string name, ConfigFile configFile, SpawnSites defaultValue, ConfigUI ui = null)
             : base(name, configFile, defaultValue, ui)
         {
+            currentValueColor = Color.blue;
             onDisplayAnchorText = delegate ()
             {
-                return SokLoc.Translate("difficultymod_config_spawn") + " " + ColorText("blue", SokLoc.Translate($"difficultymod_config_spawn_{(SpawnSites)BoxedValue}"));
+                return SokLoc.Translate("difficultymod_config_spawn") + " " + ColorText(currentValueColor, SokLoc.Translate($"difficultymod_config_spawn_{(SpawnSites)Value}"));
             };
             onDisplayEnumText = delegate (SpawnSites s)
             {
@@ -60,7 +61,6 @@ namespace DifficultyModNS
             popupMenuHelpText = SokLoc.Translate("difficultymod_config_spawn_menu_tooltip");
 
             CloseButtonText = SokLoc.Translate("difficultymod_closemenu");
-            currentValueColor = Color.blue;
         }
     }
 
@@ -70,11 +70,11 @@ namespace DifficultyModNS
         static bool Prefix(WorldManager __instance, ref Vector3 __result)
         {
             Bounds worldBounds = __instance.CurrentBoard.WorldBounds;
-            DifficultyMod.Log($"GetRandomSpawnPosition() Min/Max X {worldBounds.min.x}/{worldBounds.max.x} Min/Max Z {worldBounds.min.z}/{worldBounds.max.z}");
+//            DifficultyMod.Log($"GetRandomSpawnPosition() Min/Max X {worldBounds.min.x}/{worldBounds.max.x} Min/Max Z {worldBounds.min.z}/{worldBounds.max.z}");
             float x = Mathf.Lerp(worldBounds.min.x, worldBounds.max.x, DifficultyMod.instance.Xconfine);
             float z = Mathf.Lerp(worldBounds.min.z, worldBounds.max.z, DifficultyMod.instance.Zconfine);
             __result = new Vector3(x, 0f, z);
-            DifficultyMod.Log($"GetRandomSpawnPosition() {__result}");
+//            DifficultyMod.Log($"GetRandomSpawnPosition() {__result}");
             return false;
         }
     }
