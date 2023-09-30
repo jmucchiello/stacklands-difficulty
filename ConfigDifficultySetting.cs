@@ -24,19 +24,19 @@ namespace DifficultyModNS
             currentValueColor = Color.blue;
             onDisplayAnchorText = delegate ()
             {
-                return SokLoc.Translate("difficultymod_config_difficulty") + " " + ColorText(currentValueColor, SokLoc.Translate($"difficultymod_config_difficulty_{(int)Value}"));
+                return SizeText(25,SokLoc.Translate("difficultymod_config_difficulty") + " " + ColorText(currentValueColor, SokLoc.Translate($"difficultymod_config_difficulty_{(int)Value}")));
             };
             onDisplayAnchorTooltip = delegate ()
             {
-                return SokLoc.Translate("difficultymod_config_difficulty_tooltip");
+                return SizeText(25, SokLoc.Translate("difficultymod_config_difficulty_tooltip"));
             };
             onDisplayEnumText = delegate (DifficultyType s)
             {
-                return SokLoc.Translate($"difficultymod_config_difficulty_{(int)(object)s}");
+                return SizeText(25, SokLoc.Translate($"difficultymod_config_difficulty_{(int)(object)s}"));
             };
             onDisplayEnumTooltip = delegate (DifficultyType s)
             {
-                return SokLoc.Translate($"difficultymod_config_difficulty_{(int)(object)s}_tooltip");
+                return SizeText(25, SokLoc.Translate($"difficultymod_config_difficulty_{(int)(object)s}_tooltip"));
             };
             popupMenuTitleText = SokLoc.Translate("difficultymod_config_difficulty_menu_text");
             popupMenuHelpText = SokLoc.Translate("difficultymod_config_difficulty_menu_tooltip");

@@ -9,32 +9,44 @@ namespace DifficultyModNS
     public partial class DifficultyMod : Mod
     {
         private GameObject ShowIngameSettingsBox;
-        private ConfigEntry<bool> configPeacemodeOption;
         private ConfigToggledEnum<InGameVisibility> configShowDifficulty;
+        private ConfigToggledEnum<InGameVisibility> configShowPeacemode;
         private GameObject ShowDifficultyBackground = null;
         private GameObject ShowDifficultyText = null;
         private GameObject ShowPeacemodeBackground = null;
-        private GameObject ShowPeacemodeText = null;
         private CustomButton ShowPeacemodeBtn = null;
 
-        public static bool AllowPeacemodeToggle => instance.configPeacemodeOption.Value;
+        public static bool ShowDifficultyBox => DifficultyBoxVisibility == InGameVisibility.Always ||
+                                               (DifficultyBoxVisibility == InGameVisibility.OnPause && gameIsPaused);
+        public static bool ShowPeacemodeBox => PeacemodeBoxVisibility == InGameVisibility.Always ||
+                                               (PeacemodeBoxVisibility == InGameVisibility.OnPause && gameIsPaused);
 
-        private bool gameIsPaused = I.WM?.IsPlaying ?? true;
+        private static bool gameIsPaused = I.WM?.IsPlaying ?? true;
 
         public static void GameIsPaused(bool flag)
         {
-            if (instance.gameIsPaused ^ flag)
+            if (gameIsPaused ^ flag)
             {
-                instance.gameIsPaused = flag;
+                gameIsPaused = flag;
                 instance.ApplyShowDifficulty();
             }
         }
 
-        public static InGameVisibility InGameVisibility { get => instance?.configShowDifficulty.Value ?? InGameVisibility.Never; private set => instance.configShowDifficulty.Value = value; }
+        public static InGameVisibility DifficultyBoxVisibility { get => instance?.configShowDifficulty.Value ?? InGameVisibility.Never; private set => instance.configShowDifficulty.Value = value; }
+        public static InGameVisibility PeacemodeBoxVisibility { get => instance?.configShowPeacemode.Value ?? InGameVisibility.Never; private set => instance.configShowPeacemode.Value = value; }
 
         private string ShowDifficultyVisibilityText()
         {
-            return SokLoc.Translate("difficultymod_showdifficulty") + ": <color=blue>" +  SokLoc.Translate($"difficultymod_showdifficulty_{InGameVisibility}") + "</color>";
+            return SokLoc.Translate("difficultymod_showdifficulty") + ": <color=blue>" +  SokLoc.Translate($"difficultymod_showdifficulty_{DifficultyBoxVisibility}") + "</color>";
+        }
+
+        public class SmallerToggledEnum : ConfigToggledEnum<InGameVisibility>
+        {
+            public SmallerToggledEnum(string name, ConfigFile configFile, InGameVisibility defaultValue, ConfigUI ui = null, bool parentIsPopup = false) 
+                : base(name, configFile, defaultValue, ui, parentIsPopup)
+            {
+                currentValueColor = Color.blue;
+            }
         }
 
         public void ConfigShowDifficulty()
@@ -43,6 +55,7 @@ namespace DifficultyModNS
             {
                 NameTerm = "difficultymod_showdifficulty",
             });
+            configShowDifficulty.FontSize = 25;
             configShowDifficulty.currentValueColor = Color.blue;
             configShowDifficulty.onDisplayTooltip = delegate ()
             {
@@ -51,19 +64,36 @@ namespace DifficultyModNS
             };
             configShowDifficulty.onDisplayEnumText = delegate (InGameVisibility v)
             {
-                string term = $"difficultymod_showdifficulty_{(InGameVisibility)v}";
+                string term = $"difficultymod_visibility_{(InGameVisibility)v}";
                 return SokLoc.Translate(term);
             };
             configShowDifficulty.onChange = delegate (InGameVisibility v)
             {
-                InGameVisibility = configShowDifficulty.Value;
+                DifficultyBoxVisibility = configShowDifficulty.Value;
                 return true;
             };
 
-            configPeacemodeOption = new ConfigEntry<bool>("difficultymod_showpeacemode", Config, true, new ConfigUI()
+            configShowPeacemode = new ConfigToggledEnum<InGameVisibility>("difficultymod_showpeacemode", Config, InGameVisibility.Never, new ConfigUI()
             {
                 NameTerm = "difficultymod_showpeacemode"
             });
+            configShowPeacemode.FontSize = 25;
+            configShowPeacemode.currentValueColor = Color.blue;
+            configShowPeacemode.onDisplayTooltip = delegate ()
+            {
+                string term = $"difficultymod_showpeacemode_{configShowPeacemode.Value}_tooltip";
+                return SokLoc.Translate(term);
+            };
+            configShowPeacemode.onDisplayEnumText = delegate (InGameVisibility v)
+            {
+                string term = $"difficultymod_visibility_{(InGameVisibility)v}";
+                return SokLoc.Translate(term);
+            };
+            configShowPeacemode.onChange = delegate (InGameVisibility v)
+            {
+                PeacemodeBoxVisibility = configShowPeacemode.Value;
+                return true;
+            };
         }
 
         public void SetupShowDifficulty()
@@ -91,9 +121,6 @@ namespace DifficultyModNS
                     ShowPeacemodeBtn.Clicked += PeacemodeToggleClicked;
                     ShowPeacemodeBtn.enabled = true;
                     UpdatePeacemodeText();
-
-                    ShowPeacemodeText = ShowPeacemodeBackground.transform.GetChild(0).gameObject;
-                    ShowPeacemodeText.name = "ShowPeacemodeText";
                 }
                 else go.SetActive(false);
             }
@@ -118,9 +145,7 @@ namespace DifficultyModNS
 
         public void ApplyShowDifficulty()
         {
-            bool allowDifficulty = InGameVisibility == InGameVisibility.Always ||
-                                   (InGameVisibility == InGameVisibility.OnPause && gameIsPaused);
-            if (allowDifficulty)
+            if (ShowDifficultyBox)
             {
                 string stripParens = SokLoc.Translate($"difficultymod_difficulty") + " " + SokLoc.Translate($"difficultymod_config_difficulty_{(int)(object)difficulty}");
                 if (stripParens.Contains(" (")) stripParens = stripParens.Substring(0, stripParens.IndexOf(" ("));
@@ -135,7 +160,7 @@ namespace DifficultyModNS
             }
             else ShowDifficultyBackground.SetActive(false);
 
-            if (AllowPeacemodeToggle)
+            if (ShowPeacemodeBox)
             {
                 UpdatePeacemodeText();
                 ShowInfoBox sib = ShowPeacemodeBackground.GetComponent<ShowInfoBox>();
@@ -145,20 +170,19 @@ namespace DifficultyModNS
             }
             else ShowPeacemodeBtn.gameObject.SetActive(false);
 
-            ShowIngameSettingsBox.SetActive(AllowPeacemodeToggle || allowDifficulty);
-//            Log($"ApplyShowDifficulty {InGameVisibility} {gameIsPaused} {ShowDifficultyBackground.activeSelf} {ShowPeacemodeBtn.gameObject.activeSelf} {ShowIngameSettingsBox.activeSelf}");}
+            ShowIngameSettingsBox.SetActive(ShowDifficultyBox || ShowPeacemodeBox);
         }
     }
 
     [HarmonyPatch(typeof(WorldManager)), HarmonyPatch("Update")]
-    public class ShowDifficulty
+    public class ShowDifficulty_Patch
     {
         private static int dragdelay = 0;
         static void Postfix()
         {
             if (I.WM.DraggingCard) dragdelay = 5;
             else if (dragdelay > 0) --dragdelay;
-            if (DifficultyMod.InGameVisibility == InGameVisibility.OnPause && 
+            if (DifficultyMod.DifficultyBoxVisibility == InGameVisibility.OnPause && 
                 I.WM.IsPlaying && 
                 !I.WM.DraggingCard &&
                 dragdelay == 0)
@@ -169,7 +193,7 @@ namespace DifficultyModNS
     }
 
     //[HarmonyPatch(typeof(GameScreen)), HarmonyPatch("Update")]
-    public class NoPauseGame
+    public class NoPauseGame_Patch
     {
         private static Traverse<bool> gameSpeedButtonClicked;
         public static void Setup()

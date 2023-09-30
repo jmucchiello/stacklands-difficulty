@@ -39,16 +39,7 @@ namespace DifficultyModNS
         public StorageCapacity storageCapacity = StorageCapacity.Normal;
         private string toolTip;
 
-        private static CustomButton headerText;
-
-        private T LoadConfigEntry<T>(string key, T defValue)
-        {
-            if (Config.Data.TryGetValue(key, out JToken value))
-            {
-                return value.Value<T>();
-            }
-            return defValue;
-        }
+        private static CustomButton AnchorText;
 
         public ConfigEnabling(string name, ConfigFile config)
         {
@@ -70,18 +61,16 @@ namespace DifficultyModNS
                 Hidden = true,
                 OnUI = delegate (ConfigEntryBase c)
                 {
-                    headerText = UnityEngine.Object.Instantiate(PrefabManager.instance.ButtonPrefab, ModOptionsScreen.instance.ButtonsParent);
-                    headerText.transform.localScale = Vector3.one;
-                    headerText.transform.localPosition = Vector3.zero;
-                    headerText.transform.localRotation = Quaternion.identity;
-                    headerText.TextMeshPro.text = SokLoc.Translate("difficultymod_config_enabling_header");
-                    headerText.TooltipText = toolTip;
-                    headerText.Clicked += delegate ()
+                    AnchorText = UnityEngine.Object.Instantiate(I.PFM.ButtonPrefab, I.MOS.ButtonsParent);
+                    AnchorText.transform.localScale = Vector3.one;
+                    AnchorText.transform.localPosition = Vector3.zero;
+                    AnchorText.transform.localRotation = Quaternion.identity;
+                    AnchorText.TextMeshPro.text = SizeText(25, SokLoc.Translate("difficultymod_config_enabling_anchor"));
+                    AnchorText.TooltipText = toolTip;
+                    AnchorText.Clicked += delegate ()
                     {
-                        DifficultyMod.Log("Calling OpenMenu");
                         OpenMenu();
                     };
-                    _ = UnityEngine.Object.Instantiate(ModOptionsScreen.instance.SpacerPrefab, ModOptionsScreen.instance.ButtonsParent);
                 }
             };
             Config.Entries.Add(this);
@@ -170,29 +159,31 @@ namespace DifficultyModNS
 
         private string ButtonAllowText(bool enabled, string place)
         {
+            string text;
             if (place == "storage")
             {
-                return SokLoc.Translate($"difficultymod_config_storage") +
+                text = SokLoc.Translate($"difficultymod_config_storage") +
                        ": " + ColorText(Color.blue, SokLoc.Translate($"difficultymod_config_storage_{storageCapacity}"));
             }
             else if (place == "rare" && enabling.portals)
             {
-                return SokLoc.Translate($"difficultymod_config_enabling_{place}_{(enabled ? "enable" : "disable")}");
+                text = SokLoc.Translate($"difficultymod_config_enabling_{place}_{(enabled ? "enable" : "disable")}");
             }
             else if (place == "rare" && !enabling.portals)
             {
-                return ColorText("#bfbfbf", "<s>" + SokLoc.Translate("difficultymod_config_enabling_rare_noportals") + "</s>");
+                text = ColorText("#bfbfbf", "<s>" + SokLoc.Translate("difficultymod_config_enabling_rare_noportals") + "</s>");
             }
             else
             {
                 if (place == "strange" && btnRare != null) btnRare.TextMeshPro.text = ButtonAllowText(enabling.rarePortals, "rare");
-                return SokLoc.Translate($"difficultymod_config_enabling_{place}_{(enabled ? "enable" : "disable")}");
+                text = SokLoc.Translate($"difficultymod_config_enabling_{place}_{(enabled ? "enable" : "disable")}");
             }
+            return SizeText(25, text);
         }
 
         private CustomButton NewButton(bool state, string place)
         {
-            CustomButton btn = UnityEngine.Object.Instantiate(PrefabManager.instance.ButtonPrefab, ModOptionsScreen.instance.ButtonsParent);
+            CustomButton btn = UnityEngine.Object.Instantiate(I.PFM.ButtonPrefab, I.MOS.ButtonsParent);
             btn.transform.SetParent(popup.ButtonParent);
             btn.transform.localScale = Vector3.one;
             btn.transform.localPosition = Vector3.zero;

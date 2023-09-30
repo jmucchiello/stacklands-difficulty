@@ -9,6 +9,7 @@ namespace DifficultyModNS
     public abstract class ConfigEntryModalHelper : ConfigEntryHelper
     {
         protected static ModalScreen popup;
+        protected CustomButton AnchorButton;
 
         public void CloseMenu()
         {

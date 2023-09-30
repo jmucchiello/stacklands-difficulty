@@ -4,6 +4,7 @@ using System.Collections;
 using System.IO;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
 namespace DifficultyModNS
@@ -39,9 +40,33 @@ namespace DifficultyModNS
             configDifficulty = new ConfigDifficulty("difficultymod_difficulty", Config, DifficultyType.Normal);
             configEnabling = new ConfigEnabling("difficultymod_enabling", Config);
             configSpawnSites = new ConfigSpawnSites("difficultymod_spawning", Config, SpawnSites.Anywhere);
-            new ConfigEmtySpace(Config);
+            AdvancedSettings = new ConfigAdvancedSettings("difficultymod_advanced_settings", Config);
             new ConfigFreeText("difficultymod_label_modsettings", Config, null);
             ConfigShowDifficulty();
+#if false
+            ConfigSlider slider = new ConfigSlider("difficultymod_test", Config, "Change the Duration of Moon to this value (in seconds): ", null, 50, 500, 10, 120);
+            slider.setSliderText = (value) =>
+            {
+                return "Duration of Moons: " 
+                     + ConfigSlider.ColorText(Color.blue, value.ToString())
+                     + (value == 90 ? " (Short)"
+                     : value == 120 ? " (Medium)"
+                     : value == 200 ? " (Long)"
+                     : "");
+            };
+            slider.setSliderTooltip = (value) =>
+            {
+                return value < 90 ? "This duration is shorter than the normal Short Moon setting."
+                     : value == 90 ? "This duration is the normal Short Moon setting."
+                     : value < 120 ? "This duration is between the normal Short and Medium setting."
+                     : value == 120 ? "This duration is the normal Medium Moon setting."
+                     : value < 200 ? "This duration is between the normal Medium and Long setting."
+                     : value == 200 ? "This duration is the normal Long Moon setting."
+                     : "This duration is longer than the normal Long Moon setting.";
+            };
+#endif
+            ConfigSlider portalFrequency = new ConfigSlider("difficultymod_advanced_portalfrequency", Config, "Portal Frequency", null, 1, 8, 1, 4, false);
+
             ConfigFreeText configResetDefaults = new("none", Config, ConfigEntryModalHelper.RightAlign(SokLoc.Translate("difficultymod_reset_defaults")));
             configResetDefaults.Clicked += delegate (ConfigEntryBase c, CustomButton _)
             {
@@ -51,7 +76,17 @@ namespace DifficultyModNS
                 configSpawnSites.SetDefaults();
                 configShowDifficulty.SetDefaults();
             };
-
+#if false
+            ConfigFreeText test = new("none", Config, "                             ");
+            test.Clicked += delegate (ConfigEntryBase _, CustomButton cb)
+            {
+                Vector2 pos = InputController.instance.ClampedMousePosition();
+                RectTransform rect = cb.GetComponent<RectTransform>();
+                Vector2 size = rect.offsetMax - rect.offsetMin;
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, pos, null, out Vector2 newpos);
+                DifficultyMod.Log($"test.clicked called {pos} {newpos} {rect.offsetMin} {rect.offsetMax} {size}");
+            };
+#endif
             Config.OnSave = ApplySettings;
         }
 
@@ -59,7 +94,7 @@ namespace DifficultyModNS
         {
             InputController.instance.PlayerInput.actions["time_pause"].Disable();
             InputController.instance.PlayerInput.actions["time_3"].Disable();
-            NoPauseGame.Setup();
+            NoPauseGame_Patch.Setup();
         }
 
         public void ApplySettings()

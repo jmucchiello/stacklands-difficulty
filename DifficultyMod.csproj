@@ -82,5 +82,8 @@
       <HintPath>$(stacklands)/Stacklands_Data/Managed/UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>..\..\Program Files (x86)\Steam\steamapps\common\Stacklands\Stacklands_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

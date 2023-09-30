@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -29,9 +30,15 @@ namespace DifficultyModNS
             return $"<color=#{ColorUtility.ToHtmlStringRGBA(color)}>" + txt + "</color>";
         }
 
+        public static string SizeText(int pixels, string txt)
+        {
+            if (pixels <= 0) return txt;
+            return $"<size={pixels}>" + txt + "</size>";
+        }
+
         public CustomButton DefaultButton(RectTransform parent, string text, string tooltip = null)
         {
-            CustomButton btn = UnityEngine.Object.Instantiate(PrefabManager.instance.ButtonPrefab);
+            CustomButton btn = UnityEngine.Object.Instantiate(I.PFM.ButtonPrefab);
             btn.transform.SetParent(parent);
             btn.transform.localPosition = Vector3.zero;
             btn.transform.localScale = Vector3.one;
@@ -39,6 +46,15 @@ namespace DifficultyModNS
             btn.TextMeshPro.text = text;
             btn.TooltipText = tooltip;
             return btn;
+        }
+
+        public T LoadConfigEntry<T>(string key, T defValue)
+        {
+            if (Config.Data.TryGetValue(key, out JToken value))
+            {
+                return value.Value<T>();
+            }
+            return defValue;
         }
     }
 
@@ -56,8 +72,8 @@ namespace DifficultyModNS
             {
                 Hidden = true,
                 OnUI = delegate {
-                    spacer1 = UnityEngine.Object.Instantiate(ModOptionsScreen.instance.SpacerPrefab, ModOptionsScreen.instance.ButtonsParent);
-                    spacer2 = UnityEngine.Object.Instantiate(ModOptionsScreen.instance.SpacerPrefab, ModOptionsScreen.instance.ButtonsParent);
+                    spacer1 = UnityEngine.Object.Instantiate(I.MOS.SpacerPrefab, I.MOS.ButtonsParent);
+                    spacer2 = UnityEngine.Object.Instantiate(I.MOS.SpacerPrefab, I.MOS.ButtonsParent);
                 }
             };
         }

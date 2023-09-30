@@ -56,7 +56,7 @@ namespace DifficultyModNS
                 ExtraData = ui?.ExtraData,
                 OnUI = delegate (ConfigEntryBase c)
                 {
-                    anchor = DefaultButton(ModOptionsScreen.instance.ButtonsParent,
+                    anchor = DefaultButton(I.MOS.ButtonsParent,
                                            onDisplayAnchorText != null ? onDisplayAnchorText() : c.UI.GetName(),
                                            c.UI.GetTooltip());
                     anchor.Clicked += delegate

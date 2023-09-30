@@ -9,6 +9,7 @@ namespace DifficultyModNS
     {
         public static int PortalMinMonth = 8;
         public static int PortalDivisor = 4;
+        public static int RarePortalDivisor = 4;
         public static float FrequencyOfTravellingCart = 0.1f;
         public static int PirateDivisor = 4;
         public static int SadEventMinMonth = 4;
@@ -64,6 +65,11 @@ namespace DifficultyModNS
                     )
                     .ThrowIfNotMatch("Can't find happiness min month")
                     .Set(OpCodes.Ldsfld, AccessTools.Field(myClass, "SadEventDivisor"))
+                    .MatchStartForward(
+                        new CodeMatch(OpCodes.Ldc_I4_4)
+                    )
+                    .ThrowIfNotMatch("Can't find happiness min month")
+                    .Set(OpCodes.Ldsfld, AccessTools.Field(myClass, "RarePortalDivisor"))
                     .InstructionEnumeration()
                     .ToList();
                 //result.ForEach(instruction => DifficultyMod.Log($"{instruction}"));

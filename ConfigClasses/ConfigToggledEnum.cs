@@ -24,6 +24,16 @@ namespace DifficultyModNS
         public string CloseButtonText = null; // if null, no close button is created
         public Color currentValueColor = Color.black;
 
+        private int fontSize = 0;
+        public int FontSize
+        {
+            get => fontSize;
+            set {
+                fontSize = value;
+//                anchor.TextMeshPro.text = SizeText(fontSize, GetDisplayText());
+            }
+        }
+
         public virtual T DefaultValue { get => (T)(object)defaultValue; set => defaultValue = (int)(object)value; }
         public virtual T Value { get => (T)(object)content; set => content = (int)(object)value; }
 
@@ -33,21 +43,14 @@ namespace DifficultyModNS
             set => content = (int)value;
         }
 
-        public ConfigToggledEnum(string name, ConfigFile configFile, T defaultValue, ConfigUI ui = null)
+        public ConfigToggledEnum(string name, ConfigFile configFile, T defaultValue, ConfigUI ui = null, bool parentIsPopup = false)
         {
             Name = name;
             EnumNames = EnumHelper.GetNames<T>().ToArray();
-            ValueType = typeof(System.Object); // to avoid shenanigans from ModOptionScreen's default processing of string/int/bool
+            ValueType = typeof(object); // to avoid shenanigans from ModOptionScreen's default processing of string/int/bool
             DefaultValue = defaultValue;
             Config = configFile;
-            if (Config.Data.TryGetValue(name, out _))
-            {
-                BoxedValue = Config.GetValue<int>(name); // store as int to make it easier to reload.
-            }
-            else
-            {
-                BoxedValue = defaultValue;
-            }
+            BoxedValue = LoadConfigEntry<int>(name, (int)(object)defaultValue);
 
             UI = new ConfigUI()
             {
@@ -61,13 +64,13 @@ namespace DifficultyModNS
                 ExtraData = ui?.ExtraData,
                 OnUI = delegate (ConfigEntryBase c)
                 {
-                    anchor = DefaultButton(ModOptionsScreen.instance.ButtonsParent,
-                                           GetDisplayText(),
+                    anchor = DefaultButton(parentIsPopup ? I.Modal.ButtonParent : I.MOS.ButtonsParent,
+                                           SizeText(FontSize, GetDisplayText()),
                                            GetDisplayTooltip());
                     anchor.Clicked += delegate
                     {
                         if (++content >= EnumNames.Length) content = 0;
-                        anchor.TextMeshPro.text = GetDisplayText();
+                        anchor.TextMeshPro.text = SizeText(FontSize, GetDisplayText());
                         anchor.TooltipText = GetDisplayTooltip();
                         Config.Data[Name] = content;
                     };

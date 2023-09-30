@@ -45,11 +45,11 @@ namespace DifficultyModNS
             currentValueColor = Color.blue;
             onDisplayAnchorText = delegate ()
             {
-                return SokLoc.Translate("difficultymod_config_spawn") + " " + ColorText(currentValueColor, SokLoc.Translate($"difficultymod_config_spawn_{(SpawnSites)Value}"));
+                return SizeText(25, SokLoc.Translate("difficultymod_config_spawn_anchor") + " " + ColorText(currentValueColor, SokLoc.Translate($"difficultymod_config_spawn_{(SpawnSites)Value}")));
             };
             onDisplayEnumText = delegate (SpawnSites s)
             {
-                return SokLoc.Translate($"difficultymod_config_spawn_{s}");
+                return SizeText(25, SokLoc.Translate($"difficultymod_config_spawn_{s}"));
             };
             onDisplayEnumTooltip = delegate (SpawnSites s)
             {

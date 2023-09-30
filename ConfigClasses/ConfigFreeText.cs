@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 namespace DifficultyModNS
 {
@@ -24,7 +25,7 @@ namespace DifficultyModNS
                 Hidden = true,
                 OnUI = delegate (ConfigEntryBase c)
                 {
-                    CustomButton btn = UnityEngine.Object.Instantiate(PrefabManager.instance.ButtonPrefab, ModOptionsScreen.instance.ButtonsParent);
+                    CustomButton btn = UnityEngine.Object.Instantiate(I.PFM.ButtonPrefab, I.MOS.ButtonsParent);
                     btn.transform.localScale = Vector3.one;
                     btn.transform.localPosition = Vector3.zero;
                     btn.transform.localRotation = Quaternion.identity;
