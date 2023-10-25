@@ -64,6 +64,12 @@ namespace DifficultyModNS
             configFile.Entries.Add(this);
         }
 
+        public void Update()
+        {
+            anchor.TextMeshPro.text = GetDisplayText();
+            anchor.TooltipText = GetDisplayTooltip();
+        }
+
         public virtual string GetDisplayText()
         {
             return onDisplayText?.Invoke() ?? UI.GetName()
